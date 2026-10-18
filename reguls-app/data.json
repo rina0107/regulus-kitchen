@@ -1,0 +1,123 @@
+{
+    "members": [
+        {
+            "id": 3,
+            "name": "けんたろう",
+            "count": 0
+        },
+        {
+            "id": 4,
+            "name": "ふじなみ",
+            "count": 0
+        },
+        {
+            "id": 5,
+            "name": "ふじけん",
+            "count": 0
+        },
+        {
+            "id": 6,
+            "name": "けんちゃん",
+            "count": 0
+        }
+    ],
+    "next_member_id": 7,
+    "skipped_member_ids": [
+        1
+    ],
+    "menus": [
+        {
+            "raw_date": "2026-10-18",
+            "date": "10月18日(日)",
+            "breakfast": "どーなつ",
+            "lunch": "パンケーキ",
+            "dinner": "チョコ",
+            "custom_buyer": "ふじなみ",
+            "shift_offset": 1
+        },
+        {
+            "raw_date": "2026-11-03",
+            "date": "11月3日(火)",
+            "breakfast": "どーなつ",
+            "lunch": "パンケーキ",
+            "dinner": "チョコ",
+            "custom_buyer": "ふじけん"
+        },
+        {
+            "raw_date": "2026-11-04",
+            "date": "11月4日(水)",
+            "breakfast": "みそしる",
+            "lunch": "おやこどん",
+            "dinner": "やきにく",
+            "custom_buyer": "けんちゃん"
+        }
+    ],
+    "recipes": {
+        "どーなつ": {
+            "servings": 1.0,
+            "target_servings": 1.0,
+            "ingredients": [
+                {
+                    "name": "みすど",
+                    "amount": "３こ"
+                }
+            ],
+            "steps": "１．みすどにいく\r\n２．トレーに乗せる\r\n３．ペイペイ\r\n",
+            "url": ""
+        },
+        "パンケーキ": {
+            "servings": 1.0,
+            "target_servings": 1.0,
+            "ingredients": [
+                {
+                    "name": "ぱんけーきミックス",
+                    "amount": "１００グラム"
+                },
+                {
+                    "name": "牛乳",
+                    "amount": "４リットル"
+                },
+                {
+                    "name": "生クリーム",
+                    "amount": "一個"
+                }
+            ],
+            "steps": "１。まぜる\r\n２．やく",
+            "url": ""
+        },
+        "チョコ": {
+            "servings": 1,
+            "target_servings": 1,
+            "ingredients": [],
+            "steps": "",
+            "url": ""
+        },
+        "みそしる": {
+            "servings": 1,
+            "target_servings": 1,
+            "ingredients": [],
+            "steps": "",
+            "url": ""
+        },
+        "おやこどん": {
+            "servings": 1,
+            "target_servings": 1,
+            "ingredients": [],
+            "steps": "",
+            "url": ""
+        },
+        "やきにく": {
+            "servings": 1,
+            "target_servings": 1,
+            "ingredients": [],
+            "steps": "",
+            "url": ""
+        }
+    },
+    "shopping_items": [
+        "【10月18日(日)】みすど : ３こ"
+    ],
+    "manual_buyers": {
+        "2026-10-18": "けんちゃん"
+    }
+}

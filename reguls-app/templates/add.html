@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🍳 タイトルを Regulus Kitchen に統一 -->
+    <title>日付・メニュー追加 - Regulus Kitchen</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-top: 0; font-size: 22px; }
+        .btn-back { display: inline-block; background: #95a5a6; color: white; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-weight: bold; margin-bottom: 15px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input[type="date"], input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; }
+        
+        .btn-submit { display: block; width: 100%; background: #3498db; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-submit:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+
+    <a href="/" class="btn-back">← メイン画面に戻る</a>
+
+    <div class="card">
+        <h1>日付・メニューの追加</h1>
+
+        <form action="/add" method="POST">
+            <div class="form-group">
+                <label for="date">日付を選択</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <!-- 💡 list="dish-list" を指定して候補が出るように設定 -->
+            <div class="form-group">
+                <label for="breakfast">朝のメニュー</label>
+                <input type="text" id="breakfast" name="breakfast" list="dish-list" placeholder="例: トースト" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="lunch">昼のメニュー</label>
+                <input type="text" id="lunch" name="lunch" list="dish-list" placeholder="例: ラーメン" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="dinner">夜のメニュー</label>
+                <input type="text" id="dinner" name="dinner" list="dish-list" placeholder="例: カレー" autocomplete="off">
+            </div>
+
+            <!-- 💡 過去に登録した料理名のリストをデータ候補として埋め込み -->
+            <datalist id="dish-list">
+                {% if existing_dishes %}
+                    {% for dish in existing_dishes %}
+                        <option value="{{ dish }}">
+                    {% endfor %}
+                {% endif %}
+            </datalist>
+
+            <button type="submit" class="btn-submit">登録する</button>
+        </form>
+    </div>
+
+</body>
+</html>

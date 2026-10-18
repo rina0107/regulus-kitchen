@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>献立係ログイン - Regulus Restaurant</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; max-width: 400px; margin: 50px auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; font-size: 20px; text-align: center; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .btn-submit { background: #3498db; color: white; border: none; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; width: 100%; }
+        .error-msg { color: #e74c3c; font-weight: bold; margin-bottom: 15px; text-align: center; }
+        .btn-back { display: block; text-align: center; margin-top: 15px; color: #7f8c8d; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>🔒 献立係 ログイン</h1>
+
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" placeholder="パスワードを入力" required>
+            </div>
+            <button type="submit" class="btn-submit">ログイン</button>
+        </form>
+
+        <a href="/" class="btn-back">← キャンセルして戻る</a>
+    </div>
+
+</body>
+</html>

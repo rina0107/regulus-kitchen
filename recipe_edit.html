@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ dish_name }} の編集 - Regulus Restaurant</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; font-size: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        
+        /* 🔹 材料と量を並べるスタイル */
+        .ing-row { display: flex; gap: 10px; margin-bottom: 8px; }
+        .ing-row input.ing-name { flex: 2; }
+        .ing-row input.ing-amount { flex: 1; }
+
+        .btn-add-row { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; margin-bottom: 15px; }
+        .btn-submit { background: #2ecc71; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; width: 100%; margin-top: 15px; }
+        .btn-back { display: block; text-align: center; margin-top: 15px; color: #7f8c8d; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>✏️ レシピ編集：{{ dish_name }}</h1>
+
+        <form action="/recipe/edit/{{ dish_name }}" method="POST">
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>元のレシピの人数</label>
+                    <input type="number" name="servings" value="{{ recipe.servings }}" step="0.1" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>作る目標の人数</label>
+                    <input type="number" name="target_servings" value="{{ recipe.target_servings }}" step="0.1" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🥗 材料と分量</label>
+                <div id="ingredients-container">
+                    {% if recipe.ingredients %}
+                        {% for ing in recipe.ingredients %}
+                        <div class="ing-row">
+                            <input type="text" name="ing_name" class="ing-name" value="{{ ing.name }}" placeholder="材料名 (例: 豚肉)">
+                            <input type="text" name="ing_amount" class="ing-amount" value="{{ ing.amount }}" placeholder="分量 (例: 200g)">
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="ing-row">
+                            <input type="text" name="ing_name" class="ing-name" placeholder="材料名 (例: 豚肉)">
+                            <input type="text" name="ing_amount" class="ing-amount" placeholder="分量 (例: 200g)">
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn-add-row" onclick="addIngredientRow()">＋ 材料の行を増やす</button>
+            </div>
+
+            <div class="form-group">
+                <label>🍳 作り方・手順</label>
+                <textarea name="steps" rows="5" placeholder="作り方を入力">{{ recipe.steps }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🔗 参考URL（クックパッドなど）</label>
+                <input type="text" name="url" value="{{ recipe.url }}" placeholder="https://...">
+            </div>
+
+            <button type="submit" class="btn-submit">💾 保存する</button>
+        </form>
+
+        <a href="/recipe/{{ dish_name }}" class="btn-back">← キャンセルして戻る</a>
+    </div>
+
+    <script>
+        function addIngredientRow() {
+            const container = document.getElementById('ingredients-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'ing-row';
+            newRow.innerHTML = `
+                <input type="text" name="ing_name" class="ing-name" placeholder="材料名 (例: 豚肉)">
+                <input type="text" name="ing_amount" class="ing-amount" placeholder="分量 (例: 200g)">
+            `;
+            container.appendChild(newRow);
+        }
+    </script>
+
+</body>
+</html>

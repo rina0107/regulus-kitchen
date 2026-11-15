@@ -1,51 +1,38 @@
 import os
-import json
 import random
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from supabase import create_client, Client
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "regulus-kitchen-secret-key-2026")
 
-# ★管理者ログイン用のパスワード（好きなものに変更してください）
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "1234")
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
-DATA_FILE = "data.json"
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 JST = timezone(timedelta(hours=9))
 
 def get_today_str():
     return datetime.now(JST).strftime("%Y-%m-%d")
 
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        return {"schedules": [], "members": []}
+def load_schedules():
     try:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, dict):
-                data.setdefault("schedules", [])
-                data.setdefault("members", [])
-                return data
-            return {"schedules": [], "members": []}
+        res = supabase.table("schedules").select("*").execute()
+        return res.data or []
     except Exception:
-        return {"schedules": [], "members": []}
-
-def save_data(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        return []
 
 @app.route("/")
 def index():
-    data = load_data()
-    all_schedules = data.get("schedules", [])
+    all_schedules = load_schedules()
     today_str = get_today_str()
 
-    # 今日以降の予定（日付昇順）
     upcoming_schedules = sorted(
         [s for s in all_schedules if s.get("date", "") >= today_str],
         key=lambda x: x.get("date", "")
     )
-    # 過ぎた日の予定（新しい日付順）
     past_schedules = sorted(
         [s for s in all_schedules if s.get("date", "") < today_str],
         key=lambda x: x.get("date", ""),
@@ -83,7 +70,6 @@ def logout():
 def add_schedule():
     if not session.get("is_admin"):
         return redirect(url_for("index"))
-    data = load_data()
     new_item = {
         "id": str(random.randint(100000, 999999)),
         "date": request.form.get("date", "").strip(),
@@ -97,8 +83,7 @@ def add_schedule():
         "shoppers": request.form.get("shoppers", "").strip(),
     }
     if new_item["date"]:
-        data["schedules"].append(new_item)
-        save_data(data)
+        supabase.table("schedules").insert(new_item).execute()
         flash("練習日のご飯・買い出し予定を追加しました！")
     return redirect(url_for("index"))
 
@@ -106,9 +91,7 @@ def add_schedule():
 def delete_schedule(item_id):
     if not session.get("is_admin"):
         return redirect(url_for("index"))
-    data = load_data()
-    data["schedules"] = [s for s in data["schedules"] if s.get("id") != item_id]
-    save_data(data)
+    supabase.table("schedules").delete().eq("id", item_id).execute()
     flash("予定を削除しました。")
     return redirect(url_for("index"))
 

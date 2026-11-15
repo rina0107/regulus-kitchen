@@ -184,23 +184,6 @@
       margin-top: 14px;
       cursor: pointer;
     }
-    .roulette-box {
-      background: #fff8e7;
-      border: 1px dashed #f0ad4e;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 8px;
-    }
-    .btn-roulette {
-      background: #f0ad4e;
-      color: #222;
-      border: none;
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
 
     .modal {
       display: none;
@@ -272,35 +255,10 @@
       <textarea name="recipe_note" rows="2" placeholder="例：豚バラ600g、大根1本、卵1パック"></textarea>
 
       <label>買い出しメンバー</label>
-      <input type="text" id="shoppersInput" name="shoppers" placeholder="例：りな、けんた">
-
-      {% if members %}
-      <div class="roulette-box">
-        <div style="font-size:0.8rem; margin-bottom:6px;">
-          登録メンバーからランダム選出（人数）：
-          <select id="pickCount">
-            <option value="1">1人</option>
-            <option value="2" selected>2人</option>
-            <option value="3">3人</option>
-          </select>
-          <button type="button" class="btn-roulette" onclick="pickRandomMembers()">🎲 買い出しメンを決める</button>
-        </div>
-        <div style="font-size:0.75rem; color:#666;">候補：{{ members | join('、') }}</div>
-      </div>
-      {% endif %}
+      <input type="text" name="shoppers" placeholder="例：けんたろう、ふじなみ">
 
       <button type="submit" class="btn-submit">この内容で登録する</button>
     </form>
-
-    <hr style="margin: 20px 0; border:none; border-top:1px solid var(--border);">
-    <details>
-      <summary style="cursor:pointer; font-size:0.85rem; font-weight:bold; color:var(--muted);">👥 買い出し候補メンバーを編集する</summary>
-      <form action="/update_members" method="POST" style="margin-top:8px;">
-        <label>メンバー名（カンマ「、」区切りで入力）</label>
-        <input type="text" name="members_text" value="{{ members | join('、') }}" placeholder="例：りな、けんた、さくら、たくみ">
-        <button type="submit" class="btn-submit" style="background:#555; padding:8px;">メンバーリストを保存</button>
-      </form>
-    </details>
   </div>
   {% endif %}
 
@@ -368,17 +326,6 @@
     <button onclick="document.getElementById('loginModal').classList.remove('open')" style="margin-top:10px; padding:6px 16px; border-radius:6px; border:none; background:transparent; color:#666; cursor:pointer;">キャンセル</button>
   </div>
 </div>
-
-<script>
-  const allMembers = {{ members | tojson }};
-  function pickRandomMembers() {
-    if (!allMembers || allMembers.length === 0) return;
-    const count = parseInt(document.getElementById('pickCount').value, 10);
-    const shuffled = [...allMembers].sort(() => Math.random() - 0.5);
-    const picked = shuffled.slice(0, Math.min(count, shuffled.length));
-    document.getElementById('shoppersInput').value = picked.join('、');
-  }
-</script>
 
 </body>
 </html>

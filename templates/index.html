@@ -191,6 +191,22 @@
     }
 
     /* フォーム関連 */
+    .btn-past-search {
+      width: 100%;
+      background: #eef6ff;
+      color: #0969da;
+      border: 1px solid #b6d4fe;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
     .form-group-box {
       background: #faf7f2;
       border: 1px solid #ece4da;
@@ -231,6 +247,7 @@
       cursor: pointer;
     }
 
+    /* モーダル */
     .modal {
       display: none;
       position: fixed;
@@ -246,9 +263,29 @@
       background: white;
       padding: 20px;
       border-radius: 12px;
-      max-width: 380px;
+      max-width: 480px;
       width: 100%;
       text-align: center;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .history-item {
+      text-align: left;
+      border: 1px solid var(--border);
+      background: #fcfaf7;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .btn-use-history {
+      background: #0969da;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -284,52 +321,59 @@
   {% if is_admin %}
   <div class="card">
     <div class="section-title" style="margin-top:0;">➕ 練習日のご飯＆買い出しメンを登録</div>
+
+    <!-- 過去のご飯から探すボタン -->
+    <button type="button" class="btn-past-search" onclick="document.getElementById('pastModal').classList.add('open')">
+      📖 過去のご飯から探す（コピーして再利用）
+    </button>
+
     <form action="/add_schedule" method="POST">
       <label>練習日（必須）</label>
-      <input type="date" name="date" required>
+      <input type="date" id="inputDate" name="date" required>
 
       <label>イベント（任意・ある場合のみ入力）</label>
-      <input type="text" name="event" placeholder="例：試合前日、誕生日会、新歓、合宿など">
+      <input type="text" id="inputEvent" name="event" placeholder="例：試合前日、誕生日会、新歓、合宿など">
 
       <!-- 朝ごはん -->
       <div class="form-group-box">
         <div class="form-group-title">🌅 朝ごはん（不要なら空欄）</div>
-        <input type="text" name="morning" value="いつもの">
+        <input type="text" id="inputMorning" name="morning" value="いつもの">
       </div>
 
       <!-- 昼ごはん -->
       <div class="form-group-box">
         <div class="form-group-title">☀️ 昼ごはん（ない日は空欄でOK）</div>
         <label>ご飯メニュー（昼）</label>
-        <input type="text" name="lunch_menu" placeholder="例：焼きそば＆おにぎり">
+        <input type="text" id="inputLunchMenu" name="lunch_menu" placeholder="例：焼きそば＆おにぎり">
         <label>レシピのURL（昼）</label>
-        <input type="url" name="lunch_url" placeholder="https://cookpad.com/...">
+        <input type="url" id="inputLunchUrl" name="lunch_url" placeholder="https://cookpad.com/...">
       </div>
 
       <!-- 夜ごはん -->
       <div class="form-group-box">
         <div class="form-group-title">🌙 夜ごはん（ない日は空欄でOK）</div>
         <label>ご飯メニュー（夜）</label>
-        <input type="text" name="dinner_menu" placeholder="例：豚バラ大根＆わかめスープ">
+        <input type="text" id="inputDinnerMenu" name="dinner_menu" placeholder="例：豚バラ大根＆わかめスープ">
         <label>レシピのURL（夜）</label>
-        <input type="url" name="dinner_url" placeholder="https://cookpad.com/...">
+        <input type="url" id="inputDinnerUrl" name="dinner_url" placeholder="https://cookpad.com/...">
       </div>
 
       <label>レシピメモ・買い物リスト（任意）</label>
-      <textarea name="recipe_note" rows="2" placeholder="例：豚バラ600g、大根1本、卵1パック"></textarea>
+      <textarea id="inputRecipeNote" name="recipe_note" rows="2" placeholder="例：豚バラ600g、大根1本、卵1パック"></textarea>
 
       <label>買い出しメンバー</label>
-      <input type="text" name="shoppers" placeholder="例：けんたろう、ふじなみ">
+      <input type="text" id="inputShoppers" name="shoppers" placeholder="例：けんたろう、ふじなみ">
 
       <button type="submit" class="btn-submit">この内容で登録する</button>
     </form>
   </div>
   {% endif %}
 
+  <!-- 今日以降の予定（全員が見れる・過ぎた日は自動で消える） -->
   <div class="section-title">📅 練習日のご飯＆買い出し担当</div>
 
-  {% if schedules %}
-    {% for item in schedules %}
+  {% if upcoming_schedules %}
+    {% for item in upcoming_schedules %}
       <div class="card">
         <div class="date-row">
           <span class="date-tag">🗓 {{ item.date }}</span>
@@ -392,12 +436,62 @@
     {% endfor %}
   {% else %}
     <div class="card" style="text-align:center; color:var(--muted); padding:30px 16px;">
-      まだ練習日のご飯予定が登録されていません。<br>
+      これからの練習ご飯の予定はまだありません。<br>
       <small>（右上の「🔑 管理者」からログインすると登録できます）</small>
     </div>
   {% endif %}
 </div>
 
+<!-- 過去のご飯から探すモーダル（管理者専用） -->
+{% if is_admin %}
+<div id="pastModal" class="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3 style="margin:0; font-size:1.05rem;">📖 過去のご飯から探す</h3>
+      <button onclick="document.getElementById('pastModal').classList.remove('open')" style="border:none; background:transparent; font-size:1.2rem; cursor:pointer;">✕</button>
+    </div>
+
+    {% set all_items = past_schedules + upcoming_schedules %}
+    {% if all_items %}
+      <input type="text" id="pastSearchInput" onkeyup="filterPastItems()" placeholder="🔍 メニュー名や日付で検索（例：カレー、豚バラ）" style="margin-bottom:12px;">
+
+      <div id="pastListContainer">
+        {% for item in all_items %}
+          <div class="history-item" data-search="{{ item.date }} {{ item.lunch_menu }} {{ item.dinner_menu }} {{ item.recipe_note }}">
+            <div style="font-size:0.8rem; color:#666; margin-bottom:4px;">🗓 {{ item.date }}{% if item.event %} ・ 🎉 {{ item.event }}{% endif %}</div>
+            {% if item.lunch_menu %}<div style="font-size:0.92rem;"><strong>☀️ 昼：</strong>{{ item.lunch_menu }}</div>{% endif %}
+            {% if item.dinner_menu %}<div style="font-size:0.92rem;"><strong>🌙 夜：</strong>{{ item.dinner_menu }}</div>{% endif %}
+            {% if item.recipe_note %}<div style="font-size:0.8rem; color:#777; margin-top:4px;">📝 {{ item.recipe_note }}</div>{% endif %}
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+              <button type="button" class="btn-use-history"
+                data-morning="{{ item.morning }}"
+                data-lunch-menu="{{ item.lunch_menu }}"
+                data-lunch-url="{{ item.lunch_url }}"
+                data-dinner-menu="{{ item.dinner_menu }}"
+                data-dinner-url="{{ item.dinner_url }}"
+                data-note="{{ item.recipe_note }}"
+                onclick="applyPastMeal(this)">♻️ コピーしてまた食べる</button>
+
+              {% if item.date < today_str %}
+                <form action="/delete_schedule/{{ item.id }}" method="POST" onsubmit="return confirm('この過去履歴を完全に削除しますか？');" style="margin:0;">
+                  <button type="submit" class="btn-danger" style="padding:4px 8px; font-size:0.75rem;">履歴削除</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color:#666; font-size:0.9rem; padding:20px 0;">まだ登録されたご飯の履歴がありません。</p>
+    {% endif %}
+
+    <button onclick="document.getElementById('pastModal').classList.remove('open')" style="margin-top:8px; padding:8px 20px; border-radius:6px; border:1px solid #ccc; background:#f8f8f8; cursor:pointer;">閉じる</button>
+  </div>
+</div>
+{% endif %}
+
+<!-- QRコード表示モーダル -->
 <div id="qrModal" class="modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal-content">
     <h3 style="margin-top:0;">📱 キッチン貼付用QRコード</h3>
@@ -408,6 +502,7 @@
   </div>
 </div>
 
+<!-- 管理者ログインモーダル -->
 <div id="loginModal" class="modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal-content">
     <h3 style="margin-top:0;">🔑 管理者ログイン</h3>
@@ -418,6 +513,33 @@
     <button onclick="document.getElementById('loginModal').classList.remove('open')" style="margin-top:10px; padding:6px 16px; border-radius:6px; border:none; background:transparent; color:#666; cursor:pointer;">キャンセル</button>
   </div>
 </div>
+
+<script>
+  function filterPastItems() {
+    const q = document.getElementById('pastSearchInput').value.toLowerCase();
+    const items = document.querySelectorAll('#pastListContainer .history-item');
+    items.forEach(el => {
+      const text = (el.dataset.search || '').toLowerCase();
+      el.style.display = text.includes(q) ? 'block' : 'none';
+    });
+  }
+
+  function applyPastMeal(btn) {
+    document.getElementById('inputMorning').value = btn.dataset.morning || 'いつもの';
+    document.getElementById('inputLunchMenu').value = btn.dataset.lunchMenu || '';
+    document.getElementById('inputLunchUrl').value = btn.dataset.lunchUrl || '';
+    document.getElementById('inputDinnerMenu').value = btn.dataset.dinnerMenu || '';
+    document.getElementById('inputDinnerUrl').value = btn.dataset.dinnerUrl || '';
+    document.getElementById('inputRecipeNote').value = btn.dataset.note || '';
+
+    document.getElementById('inputDate').value = '';
+    document.getElementById('inputEvent').value = '';
+    document.getElementById('inputShoppers').value = '';
+
+    document.getElementById('pastModal').classList.remove('open');
+    document.getElementById('inputDate').focus();
+  }
+</script>
 
 </body>
 </html>

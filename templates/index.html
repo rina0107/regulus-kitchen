@@ -1,120 +1,384 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regulus Kitchen</title>
-    <style>
-        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; max-width: 600px; margin: 0 auto; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
-        
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-header { text-decoration: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; }
-        .btn-login { background: #3498db; color: white; }
-        .btn-logout { background: #95a5a6; color: white; }
-        .btn-shopping { background: #e67e22; color: white; font-size: 15px; padding: 10px 16px; display: inline-block; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-decoration: none; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>regulus-kitchen | 練習ご飯＆買い出しボード</title>
+  <style>
+    :root {
+      --primary: #ff7a45;
+      --primary-dark: #d45222;
+      --bg: #fdfaf6;
+      --card: #ffffff;
+      --text: #2d2d2d;
+      --muted: #6e6e6e;
+      --border: #ece4da;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-btns { display: flex; gap: 8px; }
+    .btn-header {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.5);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    .flash {
+      background: #fff3cd;
+      border: 1px solid #ffe69c;
+      color: #664d03;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+    }
+    .mode-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+    .mode-view { background: #e8f4fd; color: #0c5460; }
+    .mode-admin { background: #fde8e8; color: #9b1c1c; }
 
-        .date-title { background: #eef7fc; padding: 10px; border-left: 5px solid #3498db; font-weight: bold; color: #2c3e50; border-radius: 2px; }
-        
-        .menu-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        .menu-item { display: flex; align-items: center; justify-content: space-between; background: #fafafa; padding: 8px 12px; border-radius: 4px; border: 1px solid #eee; }
-        .menu-label { font-weight: bold; width: 35px; color: #7f8c8d; }
-        .dish-name { flex: 1; font-size: 15px; text-align: left; margin-left: 8px; color: #2c3e50; font-weight: bold; }
+    .section-title {
+      font-size: 1.05rem;
+      margin: 18px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .date-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .date-tag {
+      display: inline-block;
+      background: #fff0e8;
+      color: var(--primary-dark);
+      font-weight: bold;
+      font-size: 0.85rem;
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+    .event-tag {
+      display: inline-block;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fcd34d;
+      font-weight: bold;
+      font-size: 0.85rem;
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+    .menu-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 4px 0 10px;
+    }
+    .shopper-box {
+      background: #f6f8fa;
+      border-left: 4px solid #2da44e;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    .note-box {
+      font-size: 0.9rem;
+      color: var(--muted);
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+    .btn-recipe {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
 
-        /* ボタン用のグループとシンプルスタイル */
-        .btn-group-inline { display: flex; gap: 6px; }
-        .btn-mini { text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; white-space: nowrap; }
-        .btn-edit { background: #8e44ad; color: white; }
-        .btn-edit:hover { background: #71368a; }
-        .btn-make { background: #27ae60; color: white; }
-        .btn-make:hover { background: #1e8449; }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    input[type="text"], input[type="date"], input[type="url"], input[type="password"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    .btn-submit {
+      width: 100%;
+      background: #2da44e;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 14px;
+      cursor: pointer;
+    }
+    .roulette-box {
+      background: #fff8e7;
+      border: 1px dashed #f0ad4e;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .btn-roulette {
+      background: #f0ad4e;
+      color: #222;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
 
-        .btn-action { display: block; width: 100%; text-align: center; color: white; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); box-sizing: border-box; }
-        .btn-add-menu { background: #2ecc71; }
-        .btn-recipe-list { background: #34495e; }
-    </style>
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal.open { display: flex; }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="header-bar">
-        <h1 style="margin: 0; border: none; padding: 0;">🦁 Regulus Kitchen</h1>
-        
-        {% if is_admin %}
-            <a href="/logout" class="btn-header btn-logout">🔒 ログアウト (管理者)</a>
-        {% else %}
-            <a href="/login" class="btn-header btn-login">🔑 管理者ログイン</a>
-        {% endif %}
-    </div>
+<header>
+  <h1>🍳 regulus-kitchen</h1>
+  <div class="header-btns">
+    <button class="btn-header" onclick="document.getElementById('qrModal').classList.add('open')">📱 QR表示</button>
+    {% if is_admin %}
+      <a href="/logout" class="btn-header">ログアウト</a>
+    {% else %}
+      <button class="btn-header" onclick="document.getElementById('loginModal').classList.add('open')">🔑 管理者</button>
+    {% endif %}
+  </div>
+</header>
 
-    <!-- 🛒 買い出し一覧へのボタン -->
-    <a href="/shopping" class="btn-shopping">🛒 買い出し一覧</a>
+<div class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="flash">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 
-    <div class="card">
-        <h2>📅 登録中の献立</h2>
+  {% if is_admin %}
+    <div class="mode-badge mode-admin">🔧 管理者モード（編集・登録できます）</div>
+  {% else %}
+    <div class="mode-badge mode-view">👀 閲覧専用モード（QRアクセス用）</div>
+  {% endif %}
 
-        {% if menus %}
-            {% for menu in menus %}
-            <div style="margin-bottom: 25px;">
-                <div class="date-title">📅 {{ menu.date }}</div>
-                
-                <div class="menu-grid">
-                    <!-- 朝食 -->
-                    <div class="menu-item">
-                        <span class="menu-label">朝</span>
-                        {% if menu.breakfast %}
-                            <span class="dish-name">🍖 {{ menu.breakfast }}</span>
-                            <div class="btn-group-inline">
-                                <a href="/recipe/{{ menu.breakfast }}/edit" class="btn-mini btn-edit">編集</a>
-                                <a href="/recipe/{{ menu.breakfast }}" class="btn-mini btn-make">作る</a>
-                            </div>
-                        {% else %}
-                            <span style="color: #ccc; margin-left: 10px; flex: 1;">-</span>
-                        {% endif %}
-                    </div>
+  {% if is_admin %}
+  <div class="card">
+    <div class="section-title" style="margin-top:0;">➕ 練習日のご飯＆買い出しメンを登録</div>
+    <form action="/add_schedule" method="POST">
+      <label>練習日（必須）</label>
+      <input type="date" name="date" required>
 
-                    <!-- 昼食 -->
-                    <div class="menu-item">
-                        <span class="menu-label">昼</span>
-                        {% if menu.lunch %}
-                            <span class="dish-name">🍖 {{ menu.lunch }}</span>
-                            <div class="btn-group-inline">
-                                <a href="/recipe/{{ menu.lunch }}/edit" class="btn-mini btn-edit">編集</a>
-                                <a href="/recipe/{{ menu.lunch }}" class="btn-mini btn-make">作る</a>
-                            </div>
-                        {% else %}
-                            <span style="color: #ccc; margin-left: 10px; flex: 1;">-</span>
-                        {% endif %}
-                    </div>
+      <label>イベント（任意・ある場合のみ入力）</label>
+      <input type="text" name="event" placeholder="例：試合前日、誕生日会、新歓、合宿など">
 
-                    <!-- 夕食 -->
-                    <div class="menu-item">
-                        <span class="menu-label">夜</span>
-                        {% if menu.dinner %}
-                            <span class="dish-name">🍖 {{ menu.dinner }}</span>
-                            <div class="btn-group-inline">
-                                <a href="/recipe/{{ menu.dinner }}/edit" class="btn-mini btn-edit">編集</a>
-                                <a href="/recipe/{{ menu.dinner }}" class="btn-mini btn-make">作る</a>
-                            </div>
-                        {% else %}
-                            <span style="color: #ccc; margin-left: 10px; flex: 1;">-</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p style="color: #7f8c8d; text-align: center; padding: 20px 0;">現在登録されている献立はありません。</p>
-        {% endif %}
+      <label>ご飯メニュー（必須）</label>
+      <input type="text" name="menu" placeholder="例：豚バラ大根＆わかめスープ" required>
 
-        <!-- 下部のボタンエリア -->
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            {% if is_admin %}
-                <a href="/add" class="btn-action btn-add-menu" style="flex: 1;">＋ 献立を追加する</a>
-            {% endif %}
-            <a href="/recipes" class="btn-action btn-recipe-list" style="flex: 1;">📖 レシピ一覧</a>
+      <label>レシピのリンクURL（任意）</label>
+      <input type="url" name="recipe_url" placeholder="https://cookpad.com/...">
+
+      <label>レシピメモ・買い物リスト（任意）</label>
+      <textarea name="recipe_note" rows="2" placeholder="例：豚バラ600g、大根1本、卵1パック"></textarea>
+
+      <label>買い出しメンバー</label>
+      <input type="text" id="shoppersInput" name="shoppers" placeholder="例：りな、けんた">
+
+      {% if members %}
+      <div class="roulette-box">
+        <div style="font-size:0.8rem; margin-bottom:6px;">
+          登録メンバーからランダム選出（人数）：
+          <select id="pickCount">
+            <option value="1">1人</option>
+            <option value="2" selected>2人</option>
+            <option value="3">3人</option>
+          </select>
+          <button type="button" class="btn-roulette" onclick="pickRandomMembers()">🎲 買い出しメンを決める</button>
         </div>
+        <div style="font-size:0.75rem; color:#666;">候補：{{ members | join('、') }}</div>
+      </div>
+      {% endif %}
+
+      <button type="submit" class="btn-submit">この内容で登録する</button>
+    </form>
+
+    <hr style="margin: 20px 0; border:none; border-top:1px solid var(--border);">
+    <details>
+      <summary style="cursor:pointer; font-size:0.85rem; font-weight:bold; color:var(--muted);">👥 買い出し候補メンバーを編集する</summary>
+      <form action="/update_members" method="POST" style="margin-top:8px;">
+        <label>メンバー名（カンマ「、」区切りで入力）</label>
+        <input type="text" name="members_text" value="{{ members | join('、') }}" placeholder="例：りな、けんた、さくら、たくみ">
+        <button type="submit" class="btn-submit" style="background:#555; padding:8px;">メンバーリストを保存</button>
+      </form>
+    </details>
+  </div>
+  {% endif %}
+
+  <div class="section-title">📅 練習日のご飯＆買い出し担当</div>
+
+  {% if schedules %}
+    {% for item in schedules %}
+      <div class="card">
+        <div class="date-row">
+          <span class="date-tag">🗓 {{ item.date }}</span>
+          {% if item.event %}
+            <span class="event-tag">🎉 {{ item.event }}</span>
+          {% endif %}
+        </div>
+        <div class="menu-title">{{ item.menu }}</div>
+
+        <div class="shopper-box">
+          🛒 <strong>買い出し担当：</strong> {{ item.shoppers if item.shoppers else '未定' }}
+        </div>
+
+        {% if item.recipe_note %}
+          <div class="note-box">{{ item.recipe_note }}</div>
+        {% endif %}
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          {% if item.recipe_url %}
+            <a href="{{ item.recipe_url }}" target="_blank" rel="noopener noreferrer" class="btn-recipe">📖 レシピのリンクを開く ↗</a>
+          {% else %}
+            <span style="font-size:0.8rem; color:#999;">※レシピリンクなし</span>
+          {% endif %}
+
+          {% if is_admin %}
+            <form action="/delete_schedule/{{ item.id }}" method="POST" onsubmit="return confirm('この予定を削除しますか？');" style="margin:0;">
+              <button type="submit" class="btn-danger">削除</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="card" style="text-align:center; color:var(--muted); padding:30px 16px;">
+      まだ練習日のご飯予定が登録されていません。<br>
+      <small>（右上の「🔑 管理者」からログインすると登録できます）</small>
     </div>
+  {% endif %}
+</div>
+
+<div id="qrModal" class="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-content">
+    <h3 style="margin-top:0;">📱 キッチン貼付用QRコード</h3>
+    <p style="font-size:0.85rem; color:#555;">スクショして印刷し、キッチンに貼ってください！</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={{ app_url }}" alt="QR Code" style="margin:10px auto; display:block; border:8px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+    <p style="font-size:0.75rem; word-break:break-all; color:#777;">{{ app_url }}</p>
+    <button onclick="document.getElementById('qrModal').classList.remove('open')" style="padding:8px 20px; border-radius:6px; border:1px solid #ccc; background:#f8f8f8; cursor:pointer;">閉じる</button>
+  </div>
+</div>
+
+<div id="loginModal" class="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-content">
+    <h3 style="margin-top:0;">🔑 管理者ログイン</h3>
+    <form action="/login" method="POST">
+      <input type="password" name="password" placeholder="管理者パスワードを入力" required>
+      <button type="submit" class="btn-submit">ログイン</button>
+    </form>
+    <button onclick="document.getElementById('loginModal').classList.remove('open')" style="margin-top:10px; padding:6px 16px; border-radius:6px; border:none; background:transparent; color:#666; cursor:pointer;">キャンセル</button>
+  </div>
+</div>
+
+<script>
+  const allMembers = {{ members | tojson }};
+  function pickRandomMembers() {
+    if (!allMembers || allMembers.length === 0) return;
+    const count = parseInt(document.getElementById('pickCount').value, 10);
+    const shuffled = [...allMembers].sort(() => Math.random() - 0.5);
+    const picked = shuffled.slice(0, Math.min(count, shuffled.length));
+    document.getElementById('shoppersInput').value = picked.join('、');
+  }
+</script>
 
 </body>
 </html>

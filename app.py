@@ -68,6 +68,7 @@ def add_schedule():
     new_item = {
         "id": str(random.randint(100000, 999999)),
         "date": request.form.get("date", "").strip(),
+        "event": request.form.get("event", "").strip(),
         "menu": request.form.get("menu", "").strip(),
         "recipe_url": request.form.get("recipe_url", "").strip(),
         "recipe_note": request.form.get("recipe_note", "").strip(),

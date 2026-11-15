@@ -1,6 +1,7 @@
 import os
 import json
 import random
+from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
@@ -10,6 +11,10 @@ app.secret_key = os.environ.get("SECRET_KEY", "regulus-kitchen-secret-key-2026")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "1234")
 
 DATA_FILE = "data.json"
+JST = timezone(timedelta(hours=9))
+
+def get_today_str():
+    return datetime.now(JST).strftime("%Y-%m-%d")
 
 def load_data():
     if not os.path.exists(DATA_FILE):
@@ -32,14 +37,30 @@ def save_data(data):
 @app.route("/")
 def index():
     data = load_data()
-    schedules = sorted(data.get("schedules", []), key=lambda x: x.get("date", ""))
+    all_schedules = data.get("schedules", [])
+    today_str = get_today_str()
+
+    # 今日以降の予定（日付昇順）
+    upcoming_schedules = sorted(
+        [s for s in all_schedules if s.get("date", "") >= today_str],
+        key=lambda x: x.get("date", "")
+    )
+    # 過ぎた日の予定（新しい日付順）
+    past_schedules = sorted(
+        [s for s in all_schedules if s.get("date", "") < today_str],
+        key=lambda x: x.get("date", ""),
+        reverse=True
+    )
+
     is_admin = session.get("is_admin", False)
     app_url = request.url_root.rstrip("/")
     return render_template(
         "index.html",
-        schedules=schedules,
+        upcoming_schedules=upcoming_schedules,
+        past_schedules=past_schedules,
         is_admin=is_admin,
-        app_url=app_url
+        app_url=app_url,
+        today_str=today_str
     )
 
 @app.route("/login", methods=["POST"])

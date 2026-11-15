@@ -98,14 +98,14 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 6px;
+      margin-bottom: 12px;
     }
     .date-tag {
       display: inline-block;
       background: #fff0e8;
       color: var(--primary-dark);
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       padding: 3px 10px;
       border-radius: 6px;
     }
@@ -119,10 +119,52 @@
       padding: 2px 10px;
       border-radius: 999px;
     }
-    .menu-title {
-      font-size: 1.2rem;
+
+    /* 朝・昼・夜ボックス */
+    .meal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .meal-row {
+      background: #fcfaf7;
+      border: 1px solid #efe7dc;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .meal-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.98rem;
+    }
+    .meal-badge {
+      font-size: 0.78rem;
       font-weight: bold;
-      margin: 4px 0 10px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .badge-morning { background: #e0f2fe; color: #0369a1; }
+    .badge-lunch { background: #fef9c3; color: #854d0e; }
+    .badge-dinner { background: #ede9fe; color: #5b21b6; }
+
+    .btn-recipe {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      white-space: nowrap;
     }
     .shopper-box {
       background: #f6f8fa;
@@ -138,16 +180,6 @@
       white-space: pre-wrap;
       margin-bottom: 10px;
     }
-    .btn-recipe {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: bold;
-    }
     .btn-danger {
       background: #dc3545;
       color: white;
@@ -158,19 +190,33 @@
       cursor: pointer;
     }
 
+    /* フォーム関連 */
+    .form-group-box {
+      background: #faf7f2;
+      border: 1px solid #ece4da;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    .form-group-title {
+      font-size: 0.88rem;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
     label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: bold;
-      margin-top: 10px;
+      margin-top: 8px;
       margin-bottom: 4px;
     }
     input[type="text"], input[type="date"], input[type="url"], input[type="password"], textarea {
       width: 100%;
-      padding: 10px;
+      padding: 9px 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 0.95rem;
+      background: white;
     }
     .btn-submit {
       width: 100%;
@@ -245,11 +291,29 @@
       <label>イベント（任意・ある場合のみ入力）</label>
       <input type="text" name="event" placeholder="例：試合前日、誕生日会、新歓、合宿など">
 
-      <label>ご飯メニュー（必須）</label>
-      <input type="text" name="menu" placeholder="例：豚バラ大根＆わかめスープ" required>
+      <!-- 朝ごはん -->
+      <div class="form-group-box">
+        <div class="form-group-title">🌅 朝ごはん（不要なら空欄）</div>
+        <input type="text" name="morning" value="いつもの">
+      </div>
 
-      <label>レシピのリンクURL（任意）</label>
-      <input type="url" name="recipe_url" placeholder="https://cookpad.com/...">
+      <!-- 昼ごはん -->
+      <div class="form-group-box">
+        <div class="form-group-title">☀️ 昼ごはん（ない日は空欄でOK）</div>
+        <label>ご飯メニュー（昼）</label>
+        <input type="text" name="lunch_menu" placeholder="例：焼きそば＆おにぎり">
+        <label>レシピのURL（昼）</label>
+        <input type="url" name="lunch_url" placeholder="https://cookpad.com/...">
+      </div>
+
+      <!-- 夜ごはん -->
+      <div class="form-group-box">
+        <div class="form-group-title">🌙 夜ごはん（ない日は空欄でOK）</div>
+        <label>ご飯メニュー（夜）</label>
+        <input type="text" name="dinner_menu" placeholder="例：豚バラ大根＆わかめスープ">
+        <label>レシピのURL（夜）</label>
+        <input type="url" name="dinner_url" placeholder="https://cookpad.com/...">
+      </div>
 
       <label>レシピメモ・買い物リスト（任意）</label>
       <textarea name="recipe_note" rows="2" placeholder="例：豚バラ600g、大根1本、卵1パック"></textarea>
@@ -273,7 +337,41 @@
             <span class="event-tag">🎉 {{ item.event }}</span>
           {% endif %}
         </div>
-        <div class="menu-title">{{ item.menu }}</div>
+
+        <div class="meal-list">
+          {% if item.morning %}
+          <div class="meal-row">
+            <div class="meal-info">
+              <span class="meal-badge badge-morning">🌅 朝</span>
+              <strong>{{ item.morning }}</strong>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if item.lunch_menu or item.lunch_url %}
+          <div class="meal-row">
+            <div class="meal-info">
+              <span class="meal-badge badge-lunch">☀️ 昼</span>
+              <strong>{{ item.lunch_menu if item.lunch_menu else 'メニュー未入力' }}</strong>
+            </div>
+            {% if item.lunch_url %}
+              <a href="{{ item.lunch_url }}" target="_blank" rel="noopener noreferrer" class="btn-recipe">📖 昼レシピ ↗</a>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          {% if item.dinner_menu or item.dinner_url %}
+          <div class="meal-row">
+            <div class="meal-info">
+              <span class="meal-badge badge-dinner">🌙 夜</span>
+              <strong>{{ item.dinner_menu if item.dinner_menu else 'メニュー未入力' }}</strong>
+            </div>
+            {% if item.dinner_url %}
+              <a href="{{ item.dinner_url }}" target="_blank" rel="noopener noreferrer" class="btn-recipe">📖 夜レシピ ↗</a>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
 
         <div class="shopper-box">
           🛒 <strong>買い出し担当：</strong> {{ item.shoppers if item.shoppers else '未定' }}
@@ -283,19 +381,13 @@
           <div class="note-box">{{ item.recipe_note }}</div>
         {% endif %}
 
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          {% if item.recipe_url %}
-            <a href="{{ item.recipe_url }}" target="_blank" rel="noopener noreferrer" class="btn-recipe">📖 レシピのリンクを開く ↗</a>
-          {% else %}
-            <span style="font-size:0.8rem; color:#999;">※レシピリンクなし</span>
-          {% endif %}
-
-          {% if is_admin %}
+        {% if is_admin %}
+          <div style="text-align:right; margin-top:8px;">
             <form action="/delete_schedule/{{ item.id }}" method="POST" onsubmit="return confirm('この予定を削除しますか？');" style="margin:0;">
               <button type="submit" class="btn-danger">削除</button>
             </form>
-          {% endif %}
-        </div>
+          </div>
+        {% endif %}
       </div>
     {% endfor %}
   {% else %}

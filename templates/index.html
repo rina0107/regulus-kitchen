@@ -447,7 +447,7 @@
     </div>
   {% endif %}
 
-  <!-- 過去のご飯（管理者ログイン時のみ表示・直近2件＋もっと前のご飯を見るボタン） -->
+  <!-- 過去のご飯（管理者ログイン時のみ表示・直近2件＋買い出しメン表示＋もっと前のご飯を見るボタン） -->
   {% if is_admin %}
     <div class="section-title" style="margin-top:32px; border-top:2px solid var(--border); padding-top:16px;">
       📦 過去のご飯履歴（管理者専用）
@@ -498,6 +498,10 @@
             {% endif %}
           </div>
 
+          <div class="shopper-box">
+            🛒 <strong>買い出し担当：</strong> {{ item.shoppers if item.shoppers else '未定' }}
+          </div>
+
           {% if item.recipe_note %}
             <div class="note-box">{{ item.recipe_note }}</div>
           {% endif %}
@@ -540,14 +544,15 @@
       <button onclick="document.getElementById('olderPastModal').classList.remove('open')" style="border:none; background:transparent; font-size:1.2rem; cursor:pointer;">✕</button>
     </div>
 
-    <input type="text" id="pastSearchInput" onkeyup="filterPastItems()" placeholder="🔍 メニュー名や日付で検索（例：カレー、豚バラ）" style="margin-bottom:12px;">
+    <input type="text" id="pastSearchInput" onkeyup="filterPastItems()" placeholder="🔍 メニュー名・日付・買い出しメンで検索" style="margin-bottom:12px;">
 
     <div id="pastListContainer">
       {% for item in past_schedules[2:] %}
-        <div class="history-item" data-search="{{ item.date }} {{ item.lunch_menu }} {{ item.dinner_menu }} {{ item.recipe_note }}">
+        <div class="history-item" data-search="{{ item.date }} {{ item.lunch_menu }} {{ item.dinner_menu }} {{ item.shoppers }} {{ item.recipe_note }}">
           <div style="font-size:0.8rem; color:#666; margin-bottom:4px;">🗓 {{ item.date }}{% if item.event %} ・ 🎉 {{ item.event }}{% endif %}</div>
           {% if item.lunch_menu %}<div style="font-size:0.92rem;"><strong>☀️ 昼：</strong>{{ item.lunch_menu }}</div>{% endif %}
           {% if item.dinner_menu %}<div style="font-size:0.92rem;"><strong>🌙 夜：</strong>{{ item.dinner_menu }}</div>{% endif %}
+          <div style="font-size:0.85rem; color:#2da44e; margin-top:4px;">🛒 <strong>買い出し：</strong>{{ item.shoppers if item.shoppers else '未定' }}</div>
           {% if item.recipe_note %}<div style="font-size:0.8rem; color:#777; margin-top:4px;">📝 {{ item.recipe_note }}</div>{% endif %}
 
           <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">

@@ -33,13 +33,11 @@ def save_data(data):
 def index():
     data = load_data()
     schedules = sorted(data.get("schedules", []), key=lambda x: x.get("date", ""))
-    members = data.get("members", [])
     is_admin = session.get("is_admin", False)
     app_url = request.url_root.rstrip("/")
     return render_template(
         "index.html",
         schedules=schedules,
-        members=members,
         is_admin=is_admin,
         app_url=app_url
     )
@@ -69,12 +67,15 @@ def add_schedule():
         "id": str(random.randint(100000, 999999)),
         "date": request.form.get("date", "").strip(),
         "event": request.form.get("event", "").strip(),
-        "menu": request.form.get("menu", "").strip(),
-        "recipe_url": request.form.get("recipe_url", "").strip(),
+        "morning": request.form.get("morning", "").strip(),
+        "lunch_menu": request.form.get("lunch_menu", "").strip(),
+        "lunch_url": request.form.get("lunch_url", "").strip(),
+        "dinner_menu": request.form.get("dinner_menu", "").strip(),
+        "dinner_url": request.form.get("dinner_url", "").strip(),
         "recipe_note": request.form.get("recipe_note", "").strip(),
         "shoppers": request.form.get("shoppers", "").strip(),
     }
-    if new_item["date"] and new_item["menu"]:
+    if new_item["date"]:
         data["schedules"].append(new_item)
         save_data(data)
         flash("練習日のご飯・買い出し予定を追加しました！")
@@ -88,18 +89,6 @@ def delete_schedule(item_id):
     data["schedules"] = [s for s in data["schedules"] if s.get("id") != item_id]
     save_data(data)
     flash("予定を削除しました。")
-    return redirect(url_for("index"))
-
-@app.route("/update_members", methods=["POST"])
-def update_members():
-    if not session.get("is_admin"):
-        return redirect(url_for("index"))
-    raw = request.form.get("members_text", "")
-    members = [m.strip() for m in raw.replace("、", ",").split(",") if m.strip()]
-    data = load_data()
-    data["members"] = members
-    save_data(data)
-    flash("買い出し候補メンバーを更新しました！")
     return redirect(url_for("index"))
 
 if __name__ == "__main__":

@@ -34,7 +34,6 @@ def get_month_week_label(date_str):
     """日付から '11月第3週' のようなラベルを自動計算"""
     try:
         dt = datetime.strptime(date_str, "%Y-%m-%d")
-        # その月の中で同じ曜日が何回目か（1〜7日=第1週、8〜14日=第2週、15〜21日=第3週...）
         week_num = (dt.day - 1) // 7 + 1
         return f"{dt.month}月第{week_num}週"
     except Exception:
@@ -72,7 +71,7 @@ def save_members(members):
 
 
 def build_mention_text(shoppers_str, members):
-    """呼び名から本名を引いて '@本名 買い出しお願いします！' を生成"""
+    """呼び名から本名を引いて '買い出しお願いします\n@本名' を生成"""
     if not shoppers_str:
         return ""
     nick_to_real = {
@@ -87,7 +86,7 @@ def build_mention_text(shoppers_str, members):
         mentions.append(f"@{real}")
     if not mentions:
         return ""
-    return f"{' '.join(mentions)} 買い出しお願いします！"
+    return f"買い出しお願いします\n{' '.join(mentions)}"
 
 
 def normalize_schedule(row, members):

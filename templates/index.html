@@ -126,6 +126,31 @@
       outline: none;
       border-color: #ff7043;
     }
+    .search-box-wrap {
+      position: relative;
+      margin: 6px 0 10px;
+    }
+    .search-input {
+      padding: 9px 36px 9px 12px !important;
+      background: #fffdf9 !important;
+      border: 1.5px solid #ffcc80 !important;
+      font-size: 0.9rem !important;
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #eee;
+      border: none;
+      color: #666;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: none;
+    }
     .day-form-block {
       background: #fafafa;
       border: 1.5px solid #ece3dc;
@@ -163,25 +188,36 @@
       flex-wrap: wrap;
       gap: 8px;
       margin: 6px 0 10px;
+      max-height: 170px;
+      overflow-y: auto;
+      padding: 6px;
+      background: #fffaf5;
+      border-radius: 10px;
+      border: 1px solid #f0e2d8;
     }
     .shopper-chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #fff5ed;
+      background: #fff;
       border: 1.5px solid #ffcc80;
-      padding: 6px 12px;
+      padding: 5px 11px;
       border-radius: 20px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: bold;
       color: #d84315;
       cursor: pointer;
       user-select: none;
     }
+    .shopper-chip:has(input:checked) {
+      background: #ff7043;
+      border-color: #f4511e;
+      color: #fff;
+    }
     .shopper-chip input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      accent-color: #ff5722;
+      width: 15px;
+      height: 15px;
+      accent-color: #fff;
     }
     .member-form-grid {
       display: grid;
@@ -190,10 +226,13 @@
       align-items: end;
     }
     .member-list {
-      margin-top: 14px;
+      margin-top: 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
     .member-row {
       display: flex;
@@ -500,19 +539,23 @@
         <div id="dynamicDaysContainer"></div>
 
         <div style="margin-top: 14px;">
-          <label>🛒 買い出し担当を選択（呼び名で表示されます）</label>
+          <label>🛒 買い出し担当を選択（呼び名で検索＆タップ）</label>
           {% if members %}
+            <div class="search-box-wrap">
+              <input type="text" id="shopperSearchInput" class="search-input" placeholder="🔍 呼び名で検索（例：けん、たいち）..." oninput="filterShopperChips()">
+              <button type="button" id="shopperSearchClear" class="search-clear-btn" onclick="clearShopperSearch()">✕</button>
+            </div>
             <div class="shopper-chips" id="shopperChipsContainer">
               {% for m in members %}
-                <label class="shopper-chip">
-                  <input type="checkbox" name="shoppers_select[]" value="{{ m.nickname }}">
+                <label class="shopper-chip" data-name="{{ m.nickname }} {{ m.real_name }}">
+                  <input type="checkbox" name="shoppers_select[]" value="{{ m.nickname }}" onchange="filterShopperChips()">
                   <span>{{ m.nickname }}</span>
                 </label>
               {% endfor %}
             </div>
           {% else %}
             <p style="font-size:0.82rem; color:#888; margin-bottom:6px;">
-              ※ 下の「👥 買い出しメンバー登録」から部員の呼び名と本名を登録すると、ここからワンタップで選べるようになります！
+              ※ 下の「👥 買い出しメンバー登録」から部員の呼び名と本名を登録すると、ここから検索＆ワンタップで選べるようになります！
             </p>
           {% endif %}
           <input type="text" name="shoppers_extra" id="shoppersExtraInput" placeholder="リストにない人を直接入力する場合（任意・例：ゲスト）">
@@ -531,6 +574,7 @@
     <div class="card">
       <div class="card-title">
         <span>👥 買い出しメンバー登録（呼び名 ⇔ 本名）</span>
+        <span style="font-size:0.8rem; color:#888; font-weight:normal;">全 {{ members|length }} 名</span>
       </div>
       <p style="font-size:0.82rem; color:#666; margin-bottom:12px;">
         呼び名と本名を登録しておくと、みんなには「呼び名」で表示され、LINE用メンションには「@本名」が自動で使われます。
@@ -557,14 +601,18 @@
       </form>
 
       {% if members %}
-        <div class="member-list">
+        <div class="search-box-wrap" style="margin-top: 16px;">
+          <input type="text" id="memberSearchInput" class="search-input" placeholder="🔍 登録済みメンバーを呼び名・本名で検索..." oninput="filterMemberList()">
+          <button type="button" id="memberSearchClear" class="search-clear-btn" onclick="clearMemberSearch()">✕</button>
+        </div>
+        <div class="member-list" id="memberListContainer">
           {% for m in members %}
-            <div class="member-row">
+            <div class="member-row" data-name="{{ m.nickname }} {{ m.real_name }}">
               <div>
                 <strong>{{ m.nickname }}</strong>
                 <span style="color:#777; font-size:0.85rem;">（LINE本名：@{{ m.real_name }}）</span>
               </div>
-              <div style="display:flex; gap:6px;">
+              <div style="display:flex; gap:6px; flex-shrink:0;">
                 <button type="button" class="btn-edit" style="padding:4px 10px; font-size:0.8rem;"
                   onclick='editMember({{ m | tojson }})'>編集</button>
                 <form action="/delete_member/{{ m.id }}" method="POST" onsubmit="return confirm('「{{ m.nickname }}」を削除しますか？');" style="margin:0;">
@@ -667,294 +715,4 @@
     </div>
   {% endif %}
 
-  {% if is_admin and past_schedules %}
-    <div class="section-heading">📦 過去のご飯履歴（管理者専用）</div>
-    {% for s in past_schedules %}
-      <div class="camp-card" style="opacity: 0.94;">
-        <div class="camp-header" style="background: #f3ece7;">
-          <div class="camp-period" style="color: #666;">
-            🗓 {{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}
-          </div>
-          {% if s.is_multi_day %}
-            <span class="camp-badge" style="background: #8d6e63;">{{ s.days|length }}日間まとめ</span>
-          {% endif %}
-        </div>
-
-        <div class="camp-body">
-          {% for d in s.days %}
-            <div class="day-timeline">
-              <div class="day-title-row">
-                <span class="day-date-label">{{ d.date_ja }}</span>
-                {% if d.event %}
-                  <span class="event-tag">🎉 {{ d.event }}</span>
-                {% endif %}
-              </div>
-              <div class="meal-list">
-                {% if d.morning %}
-                  <div class="meal-item">
-                    <span class="meal-badge badge-morning">🌅 朝</span>
-                    <span>{{ d.morning }}</span>
-                  </div>
-                {% endif %}
-                {% if d.lunch_menu %}
-                  <div class="meal-item">
-                    <span class="meal-badge badge-lunch">☀️ 昼</span>
-                    <span>{{ d.lunch_menu }}</span>
-                    {% if d.lunch_url %}
-                      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-                        <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">📖 昼レシピ ↗</a>
-                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.lunch_url | tojson }}, this)'>🔗 URLコピー</button>
-                      </div>
-                    {% endif %}
-                  </div>
-                {% endif %}
-                {% if d.dinner_menu %}
-                  <div class="meal-item">
-                    <span class="meal-badge badge-dinner">🌙 夜</span>
-                    <span>{{ d.dinner_menu }}</span>
-                    {% if d.dinner_url %}
-                      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-                        <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">📖 夜レシピ ↗</a>
-                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.dinner_url | tojson }}, this)'>🔗 URLコピー</button>
-                      </div>
-                    {% endif %}
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          {% endfor %}
-
-          <div class="camp-footer-info">
-            <div>🛒 <strong>買い出し担当：</strong>{{ s.shoppers if s.shoppers else "未定" }}</div>
-            {% if s.recipe_note %}
-              <div class="note-box">📝 <strong>メモ・買い物リスト：</strong><br>{{ s.recipe_note }}</div>
-            {% endif %}
-          </div>
-
-          <div class="admin-actions">
-            <form action="/delete_schedule/{{ s.id }}" method="POST" onsubmit="return confirm('この履歴を削除しますか？');" style="margin:0;">
-              <button type="submit" class="btn-delete">削除</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  {% endif %}
-</div>
-
-<!-- ログインモーダル -->
-<div id="loginModal" class="modal" onclick="if(event.target===this)this.style.display='none'">
-  <div class="modal-content">
-    <h3 style="margin-bottom:12px;">🔑 管理者ログイン</h3>
-    <form action="/login" method="POST">
-      <input type="password" name="password" placeholder="管理者パスワード" required style="margin-bottom:12px;">
-      <button type="submit" class="btn-submit" style="margin-top:0;">ログイン</button>
-    </form>
-  </div>
-</div>
-
-<!-- QRモーダル -->
-<div id="qrModal" class="modal" onclick="if(event.target===this)this.style.display='none'">
-  <div class="modal-content">
-    <h3 style="margin-bottom:10px;">📱 みんなで共有QR</h3>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ app_url }}" alt="QR Code" style="margin:10px auto; display:block;">
-    <p style="font-size:0.8rem; word-break:break-all; color:#666; margin-bottom:12px;">{{ app_url }}</p>
-    <button class="btn-small" style="background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7;" onclick="copyText('{{ app_url }}', this)">URLをコピー</button>
-  </div>
-</div>
-
-<script>
-  const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
-  const startInput = document.getElementById("startDate");
-  const endInput = document.getElementById("endDate");
-  const container = document.getElementById("dynamicDaysContainer");
-
-  function copyText(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-      if (btn) {
-        const orig = btn.textContent;
-        btn.textContent = "✅ コピー完了！";
-        setTimeout(() => { btn.textContent = orig; }, 1800);
-      }
-    });
-  }
-
-  function formatJp(dateStr) {
-    const [y, m, d] = dateStr.split("-").map(Number);
-    const dt = new Date(y, m - 1, d);
-    return `${m}/${d}(${WEEKDAYS[dt.getDay()]})`;
-  }
-
-  function escapeHtml(str) {
-    return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-  }
-
-  function getDateRange(startStr, endStr) {
-    if (!startStr) return [];
-    if (!endStr || endStr < startStr) endStr = startStr;
-    const [sy, sm, sd] = startStr.split("-").map(Number);
-    const [ey, em, ed] = endStr.split("-").map(Number);
-    const cur = new Date(sy, sm - 1, sd);
-    const end = new Date(ey, em - 1, ed);
-    const list = [];
-    let guard = 0;
-    while (cur <= end && guard < 14) {
-      const y = cur.getFullYear();
-      const m = String(cur.getMonth() + 1).padStart(2, "0");
-      const d = String(cur.getDate()).padStart(2, "0");
-      list.push(`${y}-${m}-${d}`);
-      cur.setDate(cur.getDate() + 1);
-      guard++;
-    }
-    return list;
-  }
-
-  function renderDayBlocks(prefillDays = null) {
-    if (!container) return;
-    const startVal = startInput.value;
-    const endVal = endInput.value || startVal;
-    const dates = getDateRange(startVal, endVal);
-
-    if (dates.length === 0) {
-      container.innerHTML = "";
-      return;
-    }
-
-    const currentValues = {};
-    container.querySelectorAll(".day-form-block").forEach(block => {
-      const d = block.dataset.date;
-      currentValues[d] = {
-        event: block.querySelector('[name="day_event[]"]').value,
-        morning: block.querySelector('[name="day_morning[]"]').value,
-        lunch_menu: block.querySelector('[name="day_lunch_menu[]"]').value,
-        lunch_url: block.querySelector('[name="day_lunch_url[]"]').value,
-        dinner_menu: block.querySelector('[name="day_dinner_menu[]"]').value,
-        dinner_url: block.querySelector('[name="day_dinner_url[]"]').value,
-      };
-    });
-
-    container.innerHTML = dates.map((d, idx) => {
-      const data = (prefillDays && prefillDays[idx]) ? prefillDays[idx] : (currentValues[d] || {
-        event: "",
-        morning: "いつもの",
-        lunch_menu: "",
-        lunch_url: "",
-        dinner_menu: "",
-        dinner_url: ""
-      });
-
-      return `
-        <div class="day-form-block" data-date="${d}">
-          <div class="day-form-header">
-            <span>📅 ${idx + 1}日目：${formatJp(d)}</span>
-          </div>
-          <input type="hidden" name="day_date[]" value="${d}">
-
-          <div style="margin-bottom:8px;">
-            <label>🎉 この日のイベント（任意・試合前日、誕生日会など）</label>
-            <input type="text" name="day_event[]" value="${escapeHtml(data.event)}" placeholder="例：試合前日、誕生日会など（なければ空欄）">
-          </div>
-
-          <div class="meal-grid">
-            <div class="meal-row">
-              <label>🌅 朝ごはん（ない日は空欄）</label>
-              <input type="text" name="day_morning[]" value="${escapeHtml(data.morning)}" placeholder="例：いつもの">
-            </div>
-
-            <div class="meal-row">
-              <label>☀️ 昼ごはん（ない日は空欄）</label>
-              <div class="meal-row-inputs">
-                <input type="text" name="day_lunch_menu[]" value="${escapeHtml(data.lunch_menu)}" placeholder="メニュー（例：焼きそば）">
-                <input type="text" name="day_lunch_url[]" value="${escapeHtml(data.lunch_url)}" placeholder="レシピURLをペースト（任意）">
-              </div>
-            </div>
-
-            <div class="meal-row">
-              <label>🌙 夜ごはん（ない日は空欄）</label>
-              <div class="meal-row-inputs">
-                <input type="text" name="day_dinner_menu[]" value="${escapeHtml(data.dinner_menu)}" placeholder="メニュー（例：豚バラ大根）">
-                <input type="text" name="day_dinner_url[]" value="${escapeHtml(data.dinner_url)}" placeholder="レシピURLをペースト（任意）">
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  if (startInput && endInput) {
-    startInput.addEventListener("change", () => {
-      if (!endInput.value || endInput.value < startInput.value) {
-        endInput.value = startInput.value;
-      }
-      renderDayBlocks();
-    });
-    endInput.addEventListener("change", () => {
-      if (startInput.value && endInput.value < startInput.value) {
-        endInput.value = startInput.value;
-      }
-      renderDayBlocks();
-    });
-  }
-
-  // 予定の編集モード切替
-  function startEditSchedule(s) {
-    if (!startInput || !endInput) return;
-    document.getElementById("scheduleIdInput").value = s.id || "";
-    document.getElementById("formTitleText").textContent = "✏️ 予定を編集中";
-    document.getElementById("submitBtnText").textContent = "変更内容を保存する";
-    document.getElementById("editModeBanner").style.display = "flex";
-
-    const days = s.days || [];
-    if (days.length > 0) {
-      startInput.value = days[0].date;
-      endInput.value = days[days.length - 1].date;
-      renderDayBlocks(days);
-    }
-
-    const selected = s.selected_shoppers || [];
-    const registeredNicks = [];
-    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => {
-      registeredNicks.push(cb.value);
-      cb.checked = selected.includes(cb.value);
-    });
-    const extras = selected.filter(name => !registeredNicks.includes(name));
-    document.getElementById("shoppersExtraInput").value = extras.join("、");
-    document.getElementById("recipeNoteInput").value = s.recipe_note || "";
-
-    document.getElementById("registerCard").scrollIntoView({ behavior: "smooth" });
-  }
-
-  function cancelEditSchedule() {
-    document.getElementById("scheduleIdInput").value = "";
-    document.getElementById("formTitleText").textContent = "➕ 練習・合宿のご飯＆買い出しをまとめて登録";
-    document.getElementById("submitBtnText").textContent = "この内容でまとめて登録する";
-    document.getElementById("editModeBanner").style.display = "none";
-    startInput.value = "";
-    endInput.value = "";
-    container.innerHTML = "";
-    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => { cb.checked = false; });
-    document.getElementById("shoppersExtraInput").value = "";
-    document.getElementById("recipeNoteInput").value = "";
-  }
-
-  // 部員マスタ編集
-  function editMember(m) {
-    document.getElementById("memberIdInput").value = m.id || "";
-    document.getElementById("memberNicknameInput").value = m.nickname || "";
-    document.getElementById("memberRealNameInput").value = m.real_name || "";
-    document.getElementById("memberSubmitBtn").textContent = "更新";
-    document.getElementById("memberCancelWrap").style.display = "block";
-    document.getElementById("memberNicknameInput").focus();
-  }
-
-  function cancelEditMember() {
-    document.getElementById("memberIdInput").value = "";
-    document.getElementById("memberNicknameInput").value = "";
-    document.getElementById("memberRealNameInput").value = "";
-    document.getElementById("memberSubmitBtn").textContent = "追加";
-    document.getElementById("memberCancelWrap").style.display = "none";
-  }
-</script>
-</body>
-</html>
+  {% if is_

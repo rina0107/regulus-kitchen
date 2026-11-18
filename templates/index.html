@@ -344,6 +344,14 @@
       border-radius: 6px;
       letter-spacing: 0.3px;
     }
+    .camp-badge {
+      background: #52525b;
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: bold;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
     .camp-body { padding: 12px 14px; background: #fff; }
     .day-timeline {
       position: relative;
@@ -457,6 +465,7 @@
       font-size: 0.88rem;
       font-weight: bold;
       cursor: pointer;
+      touch-action: manipulation;
     }
     .note-box {
       white-space: pre-wrap;
@@ -654,6 +663,9 @@
             {% endif %}
             <span>{{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}</span>
           </div>
+          {% if s.is_multi_day %}
+            <span class="camp-badge">{{ s.days|length }}日間まとめ</span>
+          {% endif %}
         </div>
 
         <div class="camp-body">
@@ -742,6 +754,9 @@
             {% endif %}
             <span>{{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}</span>
           </div>
+          {% if s.is_multi_day %}
+            <span class="camp-badge" style="background: #71717a;">{{ s.days|length }}日間まとめ</span>
+          {% endif %}
         </div>
 
         <div class="camp-body">
@@ -831,14 +846,52 @@
   const endInput = document.getElementById("endDate");
   const container = document.getElementById("dynamicDaysContainer");
 
+  function fallbackCopyText(text, btn) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "0";
+    ta.style.left = "0";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+
+    const range = document.createRange();
+    range.selectNodeContents(ta);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    ta.setSelectionRange(0, text.length);
+
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch (e) {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = ok ? "✅ コピー完了！" : "長押しでコピーしてね";
+      setTimeout(() => { btn.textContent = orig; }, 1800);
+    }
+  }
+
   function copyText(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-      if (btn) {
-        const orig = btn.textContent;
-        btn.textContent = "✅ コピー完了！";
-        setTimeout(() => { btn.textContent = orig; }, 1800);
-      }
-    });
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        if (btn) {
+          const orig = btn.textContent;
+          btn.textContent = "✅ コピー完了！";
+          setTimeout(() => { btn.textContent = orig; }, 1800);
+        }
+      }).catch(() => {
+        fallbackCopyText(text, btn);
+      });
+    } else {
+      fallbackCopyText(text, btn);
+    }
   }
 
   function filterShopperChips() {
@@ -882,3 +935,191 @@
   }
 
   function clearMemberSearch() {
+    const input = document.getElementById("memberSearchInput");
+    if (input) {
+      input.value = "";
+      filterMemberList();
+      input.focus();
+    }
+  }
+
+  function formatJp(dateStr) {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    return `${m}/${d}(${WEEKDAYS[dt.getDay()]})`;
+  }
+
+  function escapeHtml(str) {
+    return (str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function getDateRange(startStr, endStr) {
+    if (!startStr) return [];
+    if (!endStr || endStr < startStr) endStr = startStr;
+    const [sy, sm, sd] = startStr.split("-").map(Number);
+    const [ey, em, ed] = endStr.split("-").map(Number);
+    const cur = new Date(sy, sm - 1, sd);
+    const end = new Date(ey, em - 1, ed);
+    const list = [];
+    let guard = 0;
+    while (cur <= end && guard < 14) {
+      const y = cur.getFullYear();
+      const m = String(cur.getMonth() + 1).padStart(2, "0");
+      const d = String(cur.getDate()).padStart(2, "0");
+      list.push(`${y}-${m}-${d}`);
+      cur.setDate(cur.getDate() + 1);
+      guard++;
+    }
+    return list;
+  }
+
+  function renderDayBlocks(prefillDays = null) {
+    if (!container) return;
+    const startVal = startInput.value;
+    const endVal = endInput.value || startVal;
+    const dates = getDateRange(startVal, endVal);
+
+    if (dates.length === 0) {
+      container.innerHTML = "";
+      return;
+    }
+
+    const currentValues = {};
+    container.querySelectorAll(".day-form-block").forEach(block => {
+      const d = block.dataset.date;
+      currentValues[d] = {
+        event: block.querySelector('[name="day_event[]"]').value,
+        morning: block.querySelector('[name="day_morning[]"]').value,
+        lunch_menu: block.querySelector('[name="day_lunch_menu[]"]').value,
+        lunch_url: block.querySelector('[name="day_lunch_url[]"]').value,
+        dinner_menu: block.querySelector('[name="day_dinner_menu[]"]').value,
+        dinner_url: block.querySelector('[name="day_dinner_url[]"]').value,
+      };
+    });
+
+    container.innerHTML = dates.map((d, idx) => {
+      const data = (prefillDays && prefillDays[idx]) ? prefillDays[idx] : (currentValues[d] || {
+        event: "",
+        morning: "いつもの",
+        lunch_menu: "",
+        lunch_url: "",
+        dinner_menu: "",
+        dinner_url: ""
+      });
+
+      return `
+        <div class="day-form-block" data-date="${d}">
+          <div class="day-form-header">
+            <span>📅 ${idx + 1}日目：${formatJp(d)}</span>
+          </div>
+          <input type="hidden" name="day_date[]" value="${d}">
+
+          <div style="margin-bottom:6px;">
+            <label>🎉 この日のイベント（任意・試合前日、誕生日会など）</label>
+            <input type="text" name="day_event[]" value="${escapeHtml(data.event)}" placeholder="例：試合前日、誕生日会など（なければ空欄）">
+          </div>
+
+          <div class="meal-grid">
+            <div class="meal-row">
+              <label>🌅 朝ごはん（ない日は空欄）</label>
+              <input type="text" name="day_morning[]" value="${escapeHtml(data.morning)}" placeholder="例：いつもの">
+            </div>
+
+            <div class="meal-row">
+              <label>☀️ 昼ごはん（ない日は空欄）</label>
+              <div class="meal-row-inputs">
+                <input type="text" name="day_lunch_menu[]" value="${escapeHtml(data.lunch_menu)}" placeholder="メニュー（例：焼きそば）">
+                <input type="text" name="day_lunch_url[]" value="${escapeHtml(data.lunch_url)}" placeholder="レシピURLをペースト（任意）">
+              </div>
+            </div>
+
+            <div class="meal-row">
+              <label>🌙 夜ごはん（ない日は空欄）</label>
+              <div class="meal-row-inputs">
+                <input type="text" name="day_dinner_menu[]" value="${escapeHtml(data.dinner_menu)}" placeholder="メニュー（例：豚バラ大根）">
+                <input type="text" name="day_dinner_url[]" value="${escapeHtml(data.dinner_url)}" placeholder="レシピURLをペースト（任意）">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  if (startInput && endInput) {
+    startInput.addEventListener("change", () => {
+      if (!endInput.value || endInput.value < startInput.value) {
+        endInput.value = startInput.value;
+      }
+      renderDayBlocks();
+    });
+    endInput.addEventListener("change", () => {
+      if (startInput.value && endInput.value < startInput.value) {
+        endInput.value = startInput.value;
+      }
+      renderDayBlocks();
+    });
+  }
+
+  function startEditSchedule(s) {
+    if (!startInput || !endInput) return;
+    document.getElementById("scheduleIdInput").value = s.id || "";
+    document.getElementById("formTitleText").textContent = "✏️ 予定を編集中";
+    document.getElementById("submitBtnText").textContent = "変更内容を保存する";
+    document.getElementById("editModeBanner").style.display = "flex";
+
+    const days = s.days || [];
+    if (days.length > 0) {
+      startInput.value = days[0].date;
+      endInput.value = days[days.length - 1].date;
+      renderDayBlocks(days);
+    }
+
+    const selected = s.selected_shoppers || [];
+    const registeredNicks = [];
+    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => {
+      registeredNicks.push(cb.value);
+      cb.checked = selected.includes(cb.value);
+    });
+    filterShopperChips();
+
+    const extras = selected.filter(name => !registeredNicks.includes(name));
+    document.getElementById("shoppersExtraInput").value = extras.join("、");
+    document.getElementById("recipeNoteInput").value = s.recipe_note || "";
+
+    document.getElementById("registerCard").scrollIntoView({ behavior: "smooth" });
+  }
+
+  function cancelEditSchedule() {
+    document.getElementById("scheduleIdInput").value = "";
+    document.getElementById("formTitleText").textContent = "➕ 練習・合宿のご飯＆買い出しをまとめて登録";
+    document.getElementById("submitBtnText").textContent = "この内容でまとめて登録する";
+    document.getElementById("editModeBanner").style.display = "none";
+    startInput.value = "";
+    endInput.value = "";
+    container.innerHTML = "";
+    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => { cb.checked = false; });
+    clearShopperSearch();
+    document.getElementById("shoppersExtraInput").value = "";
+    document.getElementById("recipeNoteInput").value = "";
+  }
+
+  function editMember(m) {
+    document.getElementById("memberIdInput").value = m.id || "";
+    document.getElementById("memberNicknameInput").value = m.nickname || "";
+    document.getElementById("memberRealNameInput").value = m.real_name || "";
+    document.getElementById("memberSubmitBtn").textContent = "更新";
+    document.getElementById("memberCancelWrap").style.display = "block";
+    document.getElementById("memberNicknameInput").focus();
+  }
+
+  function cancelEditMember() {
+    document.getElementById("memberIdInput").value = "";
+    document.getElementById("memberNicknameInput").value = "";
+    document.getElementById("memberRealNameInput").value = "";
+    document.getElementById("memberSubmitBtn").textContent = "追加";
+    document.getElementById("memberCancelWrap").style.display = "none";
+  }
+</script>
+</body>
+</html>

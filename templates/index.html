@@ -831,7 +831,7 @@
 
 <div id="qrModal" class="modal" onclick="if(event.target===this)this.style.display='none'">
   <div class="modal-content">
-    <h3 style="margin-bottom:10px;">📱 みんなで共有QR</h3>
+    <h3 style="margin-bottom:10px;">献立レシピ・買い出し担当QR</h3>
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ app_url }}" alt="QR Code" style="margin:10px auto; display:block;">
     <p style="font-size:0.85rem; word-break:break-all; color:#666; margin-bottom:12px;">{{ app_url }}</p>
     <button class="btn-small" style="background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7;" onclick="copyText('{{ app_url }}', this)">URLをコピー</button>

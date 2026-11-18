@@ -30,6 +30,17 @@ def format_date_ja(date_str):
         return date_str
 
 
+def get_month_week_label(date_str):
+    """日付から '11月第3週' のようなラベルを自動計算"""
+    try:
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        # その月の中で同じ曜日が何回目か（1〜7日=第1週、8〜14日=第2週、15〜21日=第3週...）
+        week_num = (dt.day - 1) // 7 + 1
+        return f"{dt.month}月第{week_num}週"
+    except Exception:
+        return ""
+
+
 def load_members():
     """部員マスタ（呼び名・本名）を schedules テーブルの専用レコードから取得"""
     try:
@@ -109,6 +120,7 @@ def normalize_schedule(row, members):
     item["days"] = days
     item["start_date"] = days[0].get("date", item.get("date", ""))
     item["end_date"] = days[-1].get("date", item.get("date", ""))
+    item["week_label"] = get_month_week_label(item["start_date"])
     item["start_date_ja"] = format_date_ja(item["start_date"])
     item["end_date_ja"] = format_date_ja(item["end_date"])
     item["is_multi_day"] = len(days) > 1

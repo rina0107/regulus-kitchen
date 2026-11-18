@@ -74,7 +74,21 @@
       margin-bottom: 14px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 6px;
+    }
+    .edit-mode-banner {
+      background: #e3f2fd;
+      border: 1.5px solid #90caf9;
+      color: #0d47a1;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
     }
     .date-range-box {
       display: grid;
@@ -125,9 +139,6 @@
       color: #d84315;
       font-size: 1rem;
       margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
     .meal-grid {
       display: grid;
@@ -147,10 +158,59 @@
       gap: 8px;
       margin-top: 4px;
     }
+    .shopper-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 6px 0 10px;
+    }
+    .shopper-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff5ed;
+      border: 1.5px solid #ffcc80;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #d84315;
+      cursor: pointer;
+      user-select: none;
+    }
+    .shopper-chip input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #ff5722;
+    }
+    .member-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+    .member-list {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .member-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #faf8f6;
+      border: 1px solid #ece3dc;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      gap: 8px;
+    }
     @media (max-width: 540px) {
       .meal-row-inputs { grid-template-columns: 1fr; }
       .date-range-box { grid-template-columns: 1fr; }
       .date-range-tilde { display: none; }
+      .member-form-grid { grid-template-columns: 1fr; }
     }
     .btn-submit {
       width: 100%;
@@ -164,6 +224,14 @@
       cursor: pointer;
       margin-top: 12px;
       box-shadow: 0 4px 10px rgba(244, 81, 30, 0.3);
+    }
+    .btn-small {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
     }
     .section-heading {
       font-size: 1.15rem;
@@ -271,6 +339,16 @@
       border-radius: 6px;
       margin-left: auto;
     }
+    .btn-url-copy {
+      background: #e0f2f1;
+      color: #00695c;
+      border: 1px solid #80cbc4;
+      font-size: 0.78rem;
+      font-weight: bold;
+      padding: 3px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
     .camp-footer-info {
       background: #f9f5f2;
       border-radius: 10px;
@@ -278,11 +356,38 @@
       margin-top: 12px;
       font-size: 0.9rem;
     }
+    .mention-box {
+      margin-top: 8px;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mention-text {
+      font-weight: bold;
+      color: #1b5e20;
+      font-size: 0.9rem;
+    }
+    .btn-line-copy {
+      background: #06c755;
+      color: #fff;
+      border: none;
+      padding: 5px 11px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
     .note-box {
       white-space: pre-wrap;
       color: #444;
-      margin-top: 6px;
-      padding-top: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
       border-top: 1px dashed #ddd;
     }
     .admin-actions {
@@ -292,11 +397,11 @@
       padding-top: 12px;
       border-top: 1px solid #eee;
     }
-    .btn-copy {
-      background: #e8f5e9;
-      color: #2e7d32;
-      border: 1px solid #a5d6a7;
-      padding: 7px 12px;
+    .btn-edit {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9;
+      padding: 7px 14px;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: bold;
@@ -306,7 +411,7 @@
       background: #ffebee;
       color: #c62828;
       border: 1px solid #ef9a9a;
-      padding: 7px 12px;
+      padding: 7px 14px;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: bold;
@@ -366,9 +471,20 @@
   {% if is_admin %}
     <div class="admin-badge">🔧 管理者モード（編集・登録できます）</div>
 
+    <!-- ご飯＆買い出し登録・編集フォーム -->
     <div class="card" id="registerCard">
-      <div class="card-title">➕ 練習・合宿のご飯＆買い出しをまとめて登録</div>
-      <form action="/add_schedule" method="POST" id="scheduleForm">
+      <div class="card-title">
+        <span id="formTitleText">➕ 練習・合宿のご飯＆買い出しをまとめて登録</span>
+      </div>
+
+      <div class="edit-mode-banner" id="editModeBanner">
+        <span>✏️ 登録済みの予定を編集中です</span>
+        <button type="button" class="btn-small" style="background:#fff; color:#0d47a1; border:1px solid #90caf9;" onclick="cancelEditSchedule()">新規登録に戻る</button>
+      </div>
+
+      <form action="/save_schedule" method="POST" id="scheduleForm">
+        <input type="hidden" name="schedule_id" id="scheduleIdInput" value="">
+
         <div class="date-range-box">
           <div>
             <label>開始日（必須）</label>
@@ -384,17 +500,81 @@
         <div id="dynamicDaysContainer"></div>
 
         <div style="margin-top: 14px;">
+          <label>🛒 買い出し担当を選択（呼び名で表示されます）</label>
+          {% if members %}
+            <div class="shopper-chips" id="shopperChipsContainer">
+              {% for m in members %}
+                <label class="shopper-chip">
+                  <input type="checkbox" name="shoppers_select[]" value="{{ m.nickname }}">
+                  <span>{{ m.nickname }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p style="font-size:0.82rem; color:#888; margin-bottom:6px;">
+              ※ 下の「👥 買い出しメンバー登録」から部員の呼び名と本名を登録すると、ここからワンタップで選べるようになります！
+            </p>
+          {% endif %}
+          <input type="text" name="shoppers_extra" id="shoppersExtraInput" placeholder="リストにない人を直接入力する場合（任意・例：ゲスト）">
+        </div>
+
+        <div style="margin-top: 14px;">
           <label>📝 レシピメモ・全体の買い物リスト（任意）</label>
           <textarea name="recipe_note" id="recipeNoteInput" rows="3" placeholder="例：豚バラ600g、大根1本、卵2パック、米10合"></textarea>
         </div>
 
-        <div style="margin-top: 12px;">
-          <label>🛒 買い出しメンバー</label>
-          <input type="text" name="shoppers" id="shoppersInput" placeholder="例：けんたろう、ふじなみ">
-        </div>
-
-        <button type="submit" class="btn-submit">この内容でまとめて登録する</button>
+        <button type="submit" class="btn-submit" id="submitBtnText">この内容でまとめて登録する</button>
       </form>
+    </div>
+
+    <!-- 部員マスタ（呼び名 ⇔ 本名）管理カード -->
+    <div class="card">
+      <div class="card-title">
+        <span>👥 買い出しメンバー登録（呼び名 ⇔ 本名）</span>
+      </div>
+      <p style="font-size:0.82rem; color:#666; margin-bottom:12px;">
+        呼び名と本名を登録しておくと、みんなには「呼び名」で表示され、LINE用メンションには「@本名」が自動で使われます。
+      </p>
+
+      <form action="/save_member" method="POST" id="memberForm">
+        <input type="hidden" name="member_id" id="memberIdInput" value="">
+        <div class="member-form-grid">
+          <div>
+            <label>呼び名（表示用）</label>
+            <input type="text" name="nickname" id="memberNicknameInput" placeholder="例：けんたろう先輩" required>
+          </div>
+          <div>
+            <label>本名（LINEメンション用）</label>
+            <input type="text" name="real_name" id="memberRealNameInput" placeholder="例：藤浪賢太郎" required>
+          </div>
+          <div>
+            <button type="submit" class="btn-small" id="memberSubmitBtn" style="background:#ff7043; color:#fff; height:42px;">追加</button>
+          </div>
+        </div>
+        <div id="memberCancelWrap" style="display:none; margin-top:6px;">
+          <button type="button" class="btn-small" style="background:#eee; color:#555;" onclick="cancelEditMember()">編集をキャンセル</button>
+        </div>
+      </form>
+
+      {% if members %}
+        <div class="member-list">
+          {% for m in members %}
+            <div class="member-row">
+              <div>
+                <strong>{{ m.nickname }}</strong>
+                <span style="color:#777; font-size:0.85rem;">（LINE本名：@{{ m.real_name }}）</span>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-edit" style="padding:4px 10px; font-size:0.8rem;"
+                  onclick='editMember({{ m | tojson }})'>編集</button>
+                <form action="/delete_member/{{ m.id }}" method="POST" onsubmit="return confirm('「{{ m.nickname }}」を削除しますか？');" style="margin:0;">
+                  <button type="submit" class="btn-delete" style="padding:4px 10px; font-size:0.8rem;">削除</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   {% endif %}
 
@@ -456,6 +636,14 @@
 
           <div class="camp-footer-info">
             <div>🛒 <strong>買い出し担当：</strong>{{ s.shoppers if s.shoppers else "未定" }}</div>
+
+            {% if s.mention_text %}
+              <div class="mention-box">
+                <span class="mention-text">{{ s.mention_text }}</span>
+                <button type="button" class="btn-line-copy" onclick='copyText({{ s.mention_text | tojson }}, this)'>📋 LINE用コピー</button>
+              </div>
+            {% endif %}
+
             {% if s.recipe_note %}
               <div class="note-box">📝 <strong>メモ・買い物リスト：</strong><br>{{ s.recipe_note }}</div>
             {% endif %}
@@ -463,7 +651,7 @@
 
           {% if is_admin %}
             <div class="admin-actions">
-              <button type="button" class="btn-copy" onclick='copySchedule({{ s | tojson }})'>♻️ コピーしてまた食べる</button>
+              <button type="button" class="btn-edit" onclick='startEditSchedule({{ s | tojson }})'>✏️ この予定を編集する</button>
               <form action="/delete_schedule/{{ s.id }}" method="POST" onsubmit="return confirm('この予定を削除しますか？');" style="margin:0;">
                 <button type="submit" class="btn-delete">削除</button>
               </form>
@@ -482,7 +670,7 @@
   {% if is_admin and past_schedules %}
     <div class="section-heading">📦 過去のご飯履歴（管理者専用）</div>
     {% for s in past_schedules %}
-      <div class="camp-card" style="opacity: 0.92;">
+      <div class="camp-card" style="opacity: 0.94;">
         <div class="camp-header" style="background: #f3ece7;">
           <div class="camp-period" style="color: #666;">
             🗓 {{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}
@@ -513,7 +701,10 @@
                     <span class="meal-badge badge-lunch">☀️ 昼</span>
                     <span>{{ d.lunch_menu }}</span>
                     {% if d.lunch_url %}
-                      <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link">📖 昼レシピ ↗</a>
+                      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+                        <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">📖 昼レシピ ↗</a>
+                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.lunch_url | tojson }}, this)'>🔗 URLコピー</button>
+                      </div>
                     {% endif %}
                   </div>
                 {% endif %}
@@ -522,7 +713,10 @@
                     <span class="meal-badge badge-dinner">🌙 夜</span>
                     <span>{{ d.dinner_menu }}</span>
                     {% if d.dinner_url %}
-                      <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link">📖 夜レシピ ↗</a>
+                      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+                        <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">📖 夜レシピ ↗</a>
+                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.dinner_url | tojson }}, this)'>🔗 URLコピー</button>
+                      </div>
                     {% endif %}
                   </div>
                 {% endif %}
@@ -538,7 +732,6 @@
           </div>
 
           <div class="admin-actions">
-            <button type="button" class="btn-copy" onclick='copySchedule({{ s | tojson }})'>♻️ コピーしてまた食べる</button>
             <form action="/delete_schedule/{{ s.id }}" method="POST" onsubmit="return confirm('この履歴を削除しますか？');" style="margin:0;">
               <button type="submit" class="btn-delete">削除</button>
             </form>
@@ -566,7 +759,7 @@
     <h3 style="margin-bottom:10px;">📱 みんなで共有QR</h3>
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ app_url }}" alt="QR Code" style="margin:10px auto; display:block;">
     <p style="font-size:0.8rem; word-break:break-all; color:#666; margin-bottom:12px;">{{ app_url }}</p>
-    <button class="btn-copy" onclick="navigator.clipboard.writeText('{{ app_url }}'); alert('URLをコピーしました！');">URLをコピー</button>
+    <button class="btn-small" style="background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7;" onclick="copyText('{{ app_url }}', this)">URLをコピー</button>
   </div>
 </div>
 
@@ -575,6 +768,16 @@
   const startInput = document.getElementById("startDate");
   const endInput = document.getElementById("endDate");
   const container = document.getElementById("dynamicDaysContainer");
+
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = "✅ コピー完了！";
+        setTimeout(() => { btn.textContent = orig; }, 1800);
+      }
+    });
+  }
 
   function formatJp(dateStr) {
     const [y, m, d] = dateStr.split("-").map(Number);
@@ -617,7 +820,6 @@
       return;
     }
 
-    // すでに入力済みの値があれば引き継ぐ
     const currentValues = {};
     container.querySelectorAll(".day-form-block").forEach(block => {
       const d = block.dataset.date;
@@ -663,7 +865,7 @@
               <label>☀️ 昼ごはん（ない日は空欄）</label>
               <div class="meal-row-inputs">
                 <input type="text" name="day_lunch_menu[]" value="${escapeHtml(data.lunch_menu)}" placeholder="メニュー（例：焼きそば）">
-                <input type="text" name="day_lunch_url[]" value="${escapeHtml(data.lunch_url)}" placeholder="レシピURL（任意）">
+                <input type="text" name="day_lunch_url[]" value="${escapeHtml(data.lunch_url)}" placeholder="レシピURLをペースト（任意）">
               </div>
             </div>
 
@@ -671,7 +873,7 @@
               <label>🌙 夜ごはん（ない日は空欄）</label>
               <div class="meal-row-inputs">
                 <input type="text" name="day_dinner_menu[]" value="${escapeHtml(data.dinner_menu)}" placeholder="メニュー（例：豚バラ大根）">
-                <input type="text" name="day_dinner_url[]" value="${escapeHtml(data.dinner_url)}" placeholder="レシピURL（任意）">
+                <input type="text" name="day_dinner_url[]" value="${escapeHtml(data.dinner_url)}" placeholder="レシピURLをペースト（任意）">
               </div>
             </div>
           </div>
@@ -695,18 +897,63 @@
     });
   }
 
-  function copySchedule(s) {
+  // 予定の編集モード切替
+  function startEditSchedule(s) {
     if (!startInput || !endInput) return;
+    document.getElementById("scheduleIdInput").value = s.id || "";
+    document.getElementById("formTitleText").textContent = "✏️ 予定を編集中";
+    document.getElementById("submitBtnText").textContent = "変更内容を保存する";
+    document.getElementById("editModeBanner").style.display = "flex";
+
     const days = s.days || [];
     if (days.length > 0) {
       startInput.value = days[0].date;
       endInput.value = days[days.length - 1].date;
       renderDayBlocks(days);
     }
+
+    const selected = s.selected_shoppers || [];
+    const registeredNicks = [];
+    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => {
+      registeredNicks.push(cb.value);
+      cb.checked = selected.includes(cb.value);
+    });
+    const extras = selected.filter(name => !registeredNicks.includes(name));
+    document.getElementById("shoppersExtraInput").value = extras.join("、");
     document.getElementById("recipeNoteInput").value = s.recipe_note || "";
-    document.getElementById("shoppersInput").value = s.shoppers || "";
+
     document.getElementById("registerCard").scrollIntoView({ behavior: "smooth" });
-    alert("内容をコピーしました！新しい「開始日」と「終了日」を選んで登録してください。");
+  }
+
+  function cancelEditSchedule() {
+    document.getElementById("scheduleIdInput").value = "";
+    document.getElementById("formTitleText").textContent = "➕ 練習・合宿のご飯＆買い出しをまとめて登録";
+    document.getElementById("submitBtnText").textContent = "この内容でまとめて登録する";
+    document.getElementById("editModeBanner").style.display = "none";
+    startInput.value = "";
+    endInput.value = "";
+    container.innerHTML = "";
+    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => { cb.checked = false; });
+    document.getElementById("shoppersExtraInput").value = "";
+    document.getElementById("recipeNoteInput").value = "";
+  }
+
+  // 部員マスタ編集
+  function editMember(m) {
+    document.getElementById("memberIdInput").value = m.id || "";
+    document.getElementById("memberNicknameInput").value = m.nickname || "";
+    document.getElementById("memberRealNameInput").value = m.real_name || "";
+    document.getElementById("memberSubmitBtn").textContent = "更新";
+    document.getElementById("memberCancelWrap").style.display = "block";
+    document.getElementById("memberNicknameInput").focus();
+  }
+
+  function cancelEditMember() {
+    document.getElementById("memberIdInput").value = "";
+    document.getElementById("memberNicknameInput").value = "";
+    document.getElementById("memberRealNameInput").value = "";
+    document.getElementById("memberSubmitBtn").textContent = "追加";
+    document.getElementById("memberCancelWrap").style.display = "none";
   }
 </script>
 </body>

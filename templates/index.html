@@ -388,4 +388,162 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    .camp-footer
+    .camp-footer-info {
+      background: #f9f5f2;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    .mention-box {
+      margin-top: 8px;
+      background: #e8f5e9;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .mention-text {
+      font-weight: bold;
+      color: #1b5e20;
+      font-size: 0.9rem;
+    }
+    .btn-line-copy {
+      background: #06c755;
+      color: #fff;
+      border: none;
+      padding: 5px 11px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .note-box {
+      white-space: pre-wrap;
+      color: #444;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed #ddd;
+    }
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+    .btn-edit {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #90caf9;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-delete {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .empty-msg {
+      background: #fff;
+      padding: 24px;
+      border-radius: 14px;
+      text-align: center;
+      color: #777;
+      border: 1px dashed #ddd;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍳 regulus-kitchen</h1>
+  <div class="header-btns">
+    <button class="btn-header" onclick="document.getElementById('qrModal').style.display='flex'">📱 QR表示</button>
+    {% if is_admin %}
+      <a href="/logout" class="btn-header">ログアウト</a>
+    {% else %}
+      <button class="btn-header" onclick="document.getElementById('loginModal').style.display='flex'">🔑 管理者</button>
+    {% endif %}
+  </div>
+</header>
+
+<div class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="flash">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% if is_admin %}
+    <div class="admin-badge">🔧 管理者モード（編集・登録できます）</div>
+
+    <div class="card" id="registerCard">
+      <div class="card-title">
+        <span id="formTitleText">➕ 練習・合宿のご飯＆買い出しをまとめて登録</span>
+      </div>
+
+      <div class="edit-mode-banner" id="editModeBanner">
+        <span>✏️ 登録済みの予定を編集中です</span>
+        <button type="button" class="btn-small" style="background:#fff; color:#0d47a1; border:1px solid #90caf9;" onclick="cancelEditSchedule()">新規登録に戻る</button>
+      </div>
+
+      <form action="/save_schedule" method="POST" id="scheduleForm">
+        <input type="hidden" name="schedule_id" id="scheduleIdInput" value="">
+
+        <div class="date-range-box">
+          <div>
+            <label>開始日（必須）</label>
+            <input type="date" id="startDate" required>
+          </div>
+          <div class="date-range-tilde">〜</div>
+          <div>
+            <label>終了日（単日なら同じ日）</label>
+            <input type="date" id="endDate" required>
+          </div>
+        </div>
+
+        <div id="dynamicDaysContainer"></div>
+
+        <div style="margin-top: 14px;">
+          <label>🛒 買い出し担当を選択（呼び名で検索＆タップ）</label>
+          {% if members %}
+            <div class="search-box-wrap">
+              <input type="text" id="shopperSearchInput" class="search-input" placeholder="🔍 呼び名で検索（例：けん、たいち）..." oninput="filterShopperChips()">
+              <button type="button" id="shopperSearchClear" class="search-clear-btn" onclick="clearShopperSearch()">✕</button>
+            </div>
+            <div class="shopper-chips" id="shopperChipsContainer">
+              {% for m in members %}
+                <label class="shopper-chip" data

@@ -8,19 +8,19 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-      background: #fff8f3;
-      color: #333;
+      background: #f4f4f5;
+      color: #222;
       line-height: 1.6;
       padding-bottom: 60px;
     }
     header {
-      background: linear-gradient(135deg, #ff7e36, #ff5722);
+      background: #27272a;
       color: #fff;
       padding: 16px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(255, 87, 34, 0.25);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -28,9 +28,9 @@
     header h1 { font-size: 1.25rem; font-weight: 800; letter-spacing: 0.5px; }
     .header-btns { display: flex; gap: 8px; }
     .btn-header {
-      background: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.14);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.45);
+      border: 1px solid rgba(255,255,255,0.35);
       padding: 6px 12px;
       border-radius: 8px;
       font-size: 0.85rem;
@@ -40,9 +40,9 @@
     }
     .container { max-width: 720px; margin: 20px auto; padding: 0 16px; }
     .flash {
-      background: #fff3cd;
-      border: 1px solid #ffeeba;
-      color: #856404;
+      background: #fff;
+      border: 1px solid #d4d4d8;
+      color: #27272a;
       padding: 12px 16px;
       border-radius: 10px;
       margin-bottom: 16px;
@@ -51,8 +51,8 @@
     }
     .admin-badge {
       display: inline-block;
-      background: #ffe0ec;
-      color: #c2185b;
+      background: #e4e4e7;
+      color: #27272a;
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.8rem;
@@ -64,13 +64,13 @@
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-      border: 1px solid #f5e6dc;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      border: 1px solid #e4e4e7;
     }
     .card-title {
       font-size: 1.1rem;
       font-weight: 800;
-      color: #e65100;
+      color: #18181b;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
@@ -78,9 +78,9 @@
       gap: 6px;
     }
     .edit-mode-banner {
-      background: #e3f2fd;
-      border: 1.5px solid #90caf9;
-      color: #0d47a1;
+      background: #f4f4f5;
+      border: 1.5px solid #a1a1aa;
+      color: #18181b;
       padding: 10px 14px;
       border-radius: 10px;
       margin-bottom: 14px;
@@ -95,28 +95,28 @@
       grid-template-columns: 1fr auto 1fr;
       gap: 10px;
       align-items: center;
-      background: #fff5ed;
+      background: #fafafa;
       padding: 14px;
       border-radius: 12px;
-      border: 1px solid #ffd8be;
+      border: 1px solid #e4e4e7;
       margin-bottom: 16px;
     }
     .date-range-tilde {
       font-weight: bold;
-      color: #ff5722;
+      color: #52525b;
       padding-top: 20px;
     }
     label {
       display: block;
       font-size: 0.85rem;
       font-weight: bold;
-      color: #555;
+      color: #3f3f46;
       margin-bottom: 5px;
     }
     input[type="text"], input[type="date"], input[type="password"], textarea {
       width: 100%;
       padding: 10px 12px;
-      border: 1.5px solid #e0d6cf;
+      border: 1.5px solid #d4d4d8;
       border-radius: 10px;
       font-size: 0.95rem;
       background: #fff;
@@ -124,7 +124,7 @@
     }
     input:focus, textarea:focus {
       outline: none;
-      border-color: #ff7043;
+      border-color: #3f3f46;
     }
     .search-box-wrap {
       position: relative;
@@ -132,8 +132,8 @@
     }
     .search-input {
       padding: 9px 36px 9px 12px !important;
-      background: #fffdf9 !important;
-      border: 1.5px solid #ffcc80 !important;
+      background: #fafafa !important;
+      border: 1.5px solid #d4d4d8 !important;
       font-size: 0.9rem !important;
     }
     .search-clear-btn {
@@ -141,9 +141,9 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      background: #eee;
+      background: #e4e4e7;
       border: none;
-      color: #666;
+      color: #52525b;
       width: 22px;
       height: 22px;
       border-radius: 50%;
@@ -153,15 +153,15 @@
     }
     .day-form-block {
       background: #fafafa;
-      border: 1.5px solid #ece3dc;
-      border-left: 5px solid #ff7043;
+      border: 1.5px solid #e4e4e7;
+      border-left: 4px solid #3f3f46;
       border-radius: 12px;
       padding: 14px;
       margin-bottom: 14px;
     }
     .day-form-header {
       font-weight: 800;
-      color: #d84315;
+      color: #18181b;
       font-size: 1rem;
       margin-bottom: 10px;
     }
@@ -175,7 +175,7 @@
       background: #fff;
       padding: 10px;
       border-radius: 8px;
-      border: 1px solid #eee;
+      border: 1px solid #e4e4e7;
     }
     .meal-row-inputs {
       display: grid;
@@ -191,27 +191,27 @@
       max-height: 170px;
       overflow-y: auto;
       padding: 6px;
-      background: #fffaf5;
+      background: #fafafa;
       border-radius: 10px;
-      border: 1px solid #f0e2d8;
+      border: 1px solid #e4e4e7;
     }
     .shopper-chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background: #fff;
-      border: 1.5px solid #ffcc80;
+      border: 1.5px solid #d4d4d8;
       padding: 5px 11px;
       border-radius: 20px;
       font-size: 0.88rem;
       font-weight: bold;
-      color: #d84315;
+      color: #27272a;
       cursor: pointer;
       user-select: none;
     }
     .shopper-chip:has(input:checked) {
-      background: #ff7043;
-      border-color: #f4511e;
+      background: #27272a;
+      border-color: #27272a;
       color: #fff;
     }
     .shopper-chip input[type="checkbox"] {
@@ -238,8 +238,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #faf8f6;
-      border: 1px solid #ece3dc;
+      background: #fafafa;
+      border: 1px solid #e4e4e7;
       padding: 8px 12px;
       border-radius: 10px;
       font-size: 0.9rem;
@@ -253,7 +253,7 @@
     }
     .btn-submit {
       width: 100%;
-      background: linear-gradient(135deg, #ff7043, #f4511e);
+      background: #27272a;
       color: #fff;
       border: none;
       padding: 14px;
@@ -262,7 +262,7 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 12px;
-      box-shadow: 0 4px 10px rgba(244, 81, 30, 0.3);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
     }
     .btn-small {
       padding: 8px 14px;
@@ -275,7 +275,7 @@
     .section-heading {
       font-size: 1.15rem;
       font-weight: 800;
-      color: #333;
+      color: #18181b;
       margin: 26px 0 12px;
       display: flex;
       align-items: center;
@@ -286,13 +286,13 @@
       border-radius: 16px;
       overflow: hidden;
       margin-bottom: 20px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-      border: 1.5px solid #ffd8be;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      border: 1.5px solid #d4d4d8;
     }
     .camp-header {
-      background: linear-gradient(135deg, #fff0e5, #ffe2ce);
+      background: #f4f4f5;
       padding: 14px 18px;
-      border-bottom: 1px solid #ffd0b0;
+      border-bottom: 1px solid #e4e4e7;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -302,21 +302,21 @@
     .camp-period {
       font-size: 1.1rem;
       font-weight: 800;
-      color: #d84315;
+      color: #18181b;
     }
     .camp-badge {
-      background: #ff5722;
+      background: #3f3f46;
       color: #fff;
       font-size: 0.75rem;
       font-weight: bold;
       padding: 3px 10px;
       border-radius: 20px;
     }
-    .camp-body { padding: 16px 18px; }
+    .camp-body { padding: 16px 18px; background: #fff; }
     .day-timeline {
       position: relative;
       padding-left: 16px;
-      border-left: 3px solid #ffab91;
+      border-left: 3px solid #a1a1aa;
       margin-bottom: 16px;
     }
     .day-timeline:last-of-type { margin-bottom: 10px; }
@@ -330,12 +330,12 @@
     .day-date-label {
       font-weight: 800;
       font-size: 1rem;
-      color: #333;
+      color: #18181b;
     }
     .event-tag {
-      background: #fff3e0;
-      color: #e65100;
-      border: 1px solid #ffcc80;
+      background: #f4f4f5;
+      color: #27272a;
+      border: 1px solid #d4d4d8;
       font-size: 0.8rem;
       font-weight: bold;
       padding: 2px 10px;
@@ -350,26 +350,27 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
-      background: #faf8f6;
+      gap: 10px;
+      background: #fafafa;
+      border: 1px solid #f0f0f2;
       padding: 8px 12px;
       border-radius: 8px;
       font-size: 0.93rem;
+      color: #18181b;
     }
     .meal-badge {
-      font-weight: bold;
+      font-weight: 800;
       font-size: 0.8rem;
-      padding: 2px 8px;
+      padding: 2px 10px;
       border-radius: 6px;
-      min-width: 52px;
+      min-width: 42px;
       text-align: center;
+      background: #e4e4e7;
+      color: #18181b;
     }
-    .badge-morning { background: #e3f2fd; color: #1565c0; }
-    .badge-lunch { background: #fff8e1; color: #f57f17; }
-    .badge-dinner { background: #ede7f6; color: #4527a0; }
     .recipe-link {
       display: inline-block;
-      background: #ff7043;
+      background: #3f3f46;
       color: #fff;
       text-decoration: none;
       font-size: 0.78rem;
@@ -379,9 +380,9 @@
       margin-left: auto;
     }
     .btn-url-copy {
-      background: #e0f2f1;
-      color: #00695c;
-      border: 1px solid #80cbc4;
+      background: #f4f4f5;
+      color: #27272a;
+      border: 1px solid #d4d4d8;
       font-size: 0.78rem;
       font-weight: bold;
       padding: 3px 9px;
@@ -389,11 +390,13 @@
       cursor: pointer;
     }
     .camp-footer-info {
-      background: #f9f5f2;
+      background: #f4f4f5;
+      border: 1px solid #e4e4e7;
       border-radius: 10px;
       padding: 12px 14px;
       margin-top: 12px;
       font-size: 0.9rem;
+      color: #18181b;
     }
     .mention-box {
       margin-top: 8px;
@@ -424,22 +427,22 @@
     }
     .note-box {
       white-space: pre-wrap;
-      color: #444;
+      color: #333;
       margin-top: 8px;
       padding-top: 8px;
-      border-top: 1px dashed #ddd;
+      border-top: 1px dashed #d4d4d8;
     }
     .admin-actions {
       display: flex;
       gap: 8px;
       margin-top: 14px;
       padding-top: 12px;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #e4e4e7;
     }
     .btn-edit {
-      background: #e3f2fd;
-      color: #1565c0;
-      border: 1px solid #90caf9;
+      background: #f4f4f5;
+      color: #18181b;
+      border: 1px solid #d4d4d8;
       padding: 7px 14px;
       border-radius: 8px;
       font-size: 0.85rem;
@@ -447,9 +450,9 @@
       cursor: pointer;
     }
     .btn-delete {
-      background: #ffebee;
-      color: #c62828;
-      border: 1px solid #ef9a9a;
+      background: #fff;
+      color: #52525b;
+      border: 1px solid #d4d4d8;
       padding: 7px 14px;
       border-radius: 8px;
       font-size: 0.85rem;
@@ -461,8 +464,8 @@
       padding: 24px;
       border-radius: 14px;
       text-align: center;
-      color: #777;
-      border: 1px dashed #ddd;
+      color: #71717a;
+      border: 1px dashed #d4d4d8;
     }
     .modal {
       display: none;
@@ -487,7 +490,7 @@
 <body>
 
 <header>
-  <h1>🍳 regulus-kitchen</h1>
+  <h1>regulus-kitchen</h1>
   <div class="header-btns">
     <button class="btn-header" onclick="document.getElementById('qrModal').style.display='flex'">📱 QR表示</button>
     {% if is_admin %}
@@ -508,16 +511,16 @@
   {% endwith %}
 
   {% if is_admin %}
-    <div class="admin-badge">🔧 管理者モード（編集・登録できます）</div>
+    <div class="admin-badge">管理者モード（編集・登録できます）</div>
 
     <div class="card" id="registerCard">
       <div class="card-title">
-        <span id="formTitleText">➕ 練習・合宿のご飯＆買い出しをまとめて登録</span>
+        <span id="formTitleText">練習・合宿のご飯＆買い出しをまとめて登録</span>
       </div>
 
       <div class="edit-mode-banner" id="editModeBanner">
-        <span>✏️ 登録済みの予定を編集中です</span>
-        <button type="button" class="btn-small" style="background:#fff; color:#0d47a1; border:1px solid #90caf9;" onclick="cancelEditSchedule()">新規登録に戻る</button>
+        <span>登録済みの予定を編集中です</span>
+        <button type="button" class="btn-small" style="background:#fff; color:#18181b; border:1px solid #a1a1aa;" onclick="cancelEditSchedule()">新規登録に戻る</button>
       </div>
 
       <form action="/save_schedule" method="POST" id="scheduleForm">
@@ -538,10 +541,10 @@
         <div id="dynamicDaysContainer"></div>
 
         <div style="margin-top: 14px;">
-          <label>🛒 買い出し担当を選択（呼び名で検索＆タップ）</label>
+          <label>買い出し担当を選択（呼び名で検索＆タップ）</label>
           {% if members %}
             <div class="search-box-wrap">
-              <input type="text" id="shopperSearchInput" class="search-input" placeholder="🔍 呼び名で検索（例：けん、たいち）..." oninput="filterShopperChips()">
+              <input type="text" id="shopperSearchInput" class="search-input" placeholder="呼び名で検索（例：けん、たいち）..." oninput="filterShopperChips()">
               <button type="button" id="shopperSearchClear" class="search-clear-btn" onclick="clearShopperSearch()">✕</button>
             </div>
             <div class="shopper-chips" id="shopperChipsContainer">
@@ -553,15 +556,15 @@
               {% endfor %}
             </div>
           {% else %}
-            <p style="font-size:0.82rem; color:#888; margin-bottom:6px;">
-              ※ 下の「👥 買い出しメンバー登録」から部員の呼び名と本名を登録すると、ここから検索＆ワンタップで選べるようになります！
+            <p style="font-size:0.82rem; color:#71717a; margin-bottom:6px;">
+              ※ 下の「買い出しメンバー登録」から部員の呼び名と本名を登録すると、ここから検索＆ワンタップで選べるようになります！
             </p>
           {% endif %}
           <input type="text" name="shoppers_extra" id="shoppersExtraInput" placeholder="リストにない人を直接入力する場合（任意・例：ゲスト）">
         </div>
 
         <div style="margin-top: 14px;">
-          <label>📝 レシピメモ・全体の買い物リスト（任意）</label>
+          <label>レシピメモ・全体の買い物リスト（任意）</label>
           <textarea name="recipe_note" id="recipeNoteInput" rows="3" placeholder="例：豚バラ600g、大根1本、卵2パック、米10合"></textarea>
         </div>
 
@@ -571,10 +574,10 @@
 
     <div class="card">
       <div class="card-title">
-        <span>👥 買い出しメンバー登録（呼び名 ⇔ 本名）</span>
-        <span style="font-size:0.8rem; color:#888; font-weight:normal;">全 {{ members|length }} 名</span>
+        <span>買い出しメンバー登録（呼び名 ⇔ 本名）</span>
+        <span style="font-size:0.8rem; color:#71717a; font-weight:normal;">全 {{ members|length }} 名</span>
       </div>
-      <p style="font-size:0.82rem; color:#666; margin-bottom:12px;">
+      <p style="font-size:0.82rem; color:#52525b; margin-bottom:12px;">
         呼び名と本名を登録しておくと、みんなには「呼び名」で表示され、LINE用メンションには「@本名」が自動で使われます。
       </p>
 
@@ -590,17 +593,17 @@
             <input type="text" name="real_name" id="memberRealNameInput" placeholder="例：藤浪賢太郎" required>
           </div>
           <div>
-            <button type="submit" class="btn-small" id="memberSubmitBtn" style="background:#ff7043; color:#fff; height:42px;">追加</button>
+            <button type="submit" class="btn-small" id="memberSubmitBtn" style="background:#27272a; color:#fff; height:42px;">追加</button>
           </div>
         </div>
         <div id="memberCancelWrap" style="display:none; margin-top:6px;">
-          <button type="button" class="btn-small" style="background:#eee; color:#555;" onclick="cancelEditMember()">編集をキャンセル</button>
+          <button type="button" class="btn-small" style="background:#e4e4e7; color:#27272a;" onclick="cancelEditMember()">編集をキャンセル</button>
         </div>
       </form>
 
       {% if members %}
         <div class="search-box-wrap" style="margin-top: 16px;">
-          <input type="text" id="memberSearchInput" class="search-input" placeholder="🔍 登録済みメンバーを呼び名・本名で検索..." oninput="filterMemberList()">
+          <input type="text" id="memberSearchInput" class="search-input" placeholder="登録済みメンバーを呼び名・本名で検索..." oninput="filterMemberList()">
           <button type="button" id="memberSearchClear" class="search-clear-btn" onclick="clearMemberSearch()">✕</button>
         </div>
         <div class="member-list" id="memberListContainer">
@@ -608,7 +611,7 @@
             <div class="member-row" data-name="{{ m.nickname }} {{ m.real_name }}">
               <div>
                 <strong>{{ m.nickname }}</strong>
-                <span style="color:#777; font-size:0.85rem;">（LINE本名：@{{ m.real_name }}）</span>
+                <span style="color:#71717a; font-size:0.85rem;">（LINE本名：@{{ m.real_name }}）</span>
               </div>
               <div style="display:flex; gap:6px; flex-shrink:0;">
                 <button type="button" class="btn-edit" style="padding:4px 10px; font-size:0.8rem;"
@@ -624,14 +627,14 @@
     </div>
   {% endif %}
 
-  <div class="section-heading">📅 これからの練習・合宿ご飯＆買い出し担当</div>
+  <div class="section-heading">これからの練習・合宿ご飯＆買い出し担当</div>
 
   {% if upcoming_schedules %}
     {% for s in upcoming_schedules %}
       <div class="camp-card">
         <div class="camp-header">
           <div class="camp-period">
-            🗓 {{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}
+            {{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}
           </div>
           {% if s.is_multi_day %}
             <span class="camp-badge">{{ s.days|length }}日間まとめ</span>
@@ -644,32 +647,32 @@
               <div class="day-title-row">
                 <span class="day-date-label">{{ d.date_ja }}</span>
                 {% if d.event %}
-                  <span class="event-tag">🎉 {{ d.event }}</span>
+                  <span class="event-tag">{{ d.event }}</span>
                 {% endif %}
               </div>
 
               <div class="meal-list">
                 {% if d.morning %}
                   <div class="meal-item">
-                    <span class="meal-badge badge-morning">🌅 朝</span>
+                    <span class="meal-badge">朝</span>
                     <span>{{ d.morning }}</span>
                   </div>
                 {% endif %}
                 {% if d.lunch_menu %}
                   <div class="meal-item">
-                    <span class="meal-badge badge-lunch">☀️ 昼</span>
+                    <span class="meal-badge">昼</span>
                     <span>{{ d.lunch_menu }}</span>
                     {% if d.lunch_url %}
-                      <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link">📖 昼レシピ ↗</a>
+                      <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link">昼レシピ ↗</a>
                     {% endif %}
                   </div>
                 {% endif %}
                 {% if d.dinner_menu %}
                   <div class="meal-item">
-                    <span class="meal-badge badge-dinner">🌙 夜</span>
+                    <span class="meal-badge">夜</span>
                     <span>{{ d.dinner_menu }}</span>
                     {% if d.dinner_url %}
-                      <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link">📖 夜レシピ ↗</a>
+                      <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link">夜レシピ ↗</a>
                     {% endif %}
                   </div>
                 {% endif %}
@@ -681,7 +684,7 @@
           {% endfor %}
 
           <div class="camp-footer-info">
-            <div>🛒 <strong>買い出し担当：</strong>{{ s.shoppers if s.shoppers else "未定" }}</div>
+            <div><strong>買い出し担当：</strong>{{ s.shoppers if s.shoppers else "未定" }}</div>
 
             {% if s.mention_text %}
               <div class="mention-box">
@@ -691,13 +694,13 @@
             {% endif %}
 
             {% if s.recipe_note %}
-              <div class="note-box">📝 <strong>メモ・買い物リスト：</strong><br>{{ s.recipe_note }}</div>
+              <div class="note-box"><strong>メモ・買い物リスト：</strong><br>{{ s.recipe_note }}</div>
             {% endif %}
           </div>
 
           {% if is_admin %}
             <div class="admin-actions">
-              <button type="button" class="btn-edit" onclick='startEditSchedule({{ s | tojson }})'>✏️ この予定を編集する</button>
+              <button type="button" class="btn-edit" onclick='startEditSchedule({{ s | tojson }})'>この予定を編集する</button>
               <form action="/delete_schedule/{{ s.id }}" method="POST" onsubmit="return confirm('この予定を削除しますか？');" style="margin:0;">
                 <button type="submit" class="btn-delete">削除</button>
               </form>
@@ -709,20 +712,20 @@
   {% else %}
     <div class="empty-msg">
       これからの練習ご飯の予定はまだありません。<br>
-      <small>（右上の「🔑 管理者」からログインすると登録できます）</small>
+      <small>（右上の「管理者」からログインすると登録できます）</small>
     </div>
   {% endif %}
 
   {% if is_admin and past_schedules %}
-    <div class="section-heading">📦 過去のご飯履歴（管理者専用）</div>
+    <div class="section-heading">過去のご飯履歴（管理者専用）</div>
     {% for s in past_schedules %}
       <div class="camp-card" style="opacity: 0.94;">
-        <div class="camp-header" style="background: #f3ece7;">
-          <div class="camp-period" style="color: #666;">
-            🗓 {{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}
+        <div class="camp-header">
+          <div class="camp-period" style="color: #52525b;">
+            {{ s.start_date_ja }}{% if s.is_multi_day %} 〜 {{ s.end_date_ja }}{% endif %}
           </div>
           {% if s.is_multi_day %}
-            <span class="camp-badge" style="background: #8d6e63;">{{ s.days|length }}日間まとめ</span>
+            <span class="camp-badge" style="background: #71717a;">{{ s.days|length }}日間まとめ</span>
           {% endif %}
         </div>
 
@@ -732,36 +735,36 @@
               <div class="day-title-row">
                 <span class="day-date-label">{{ d.date_ja }}</span>
                 {% if d.event %}
-                  <span class="event-tag">🎉 {{ d.event }}</span>
+                  <span class="event-tag">{{ d.event }}</span>
                 {% endif %}
               </div>
               <div class="meal-list">
                 {% if d.morning %}
                   <div class="meal-item">
-                    <span class="meal-badge badge-morning">🌅 朝</span>
+                    <span class="meal-badge">朝</span>
                     <span>{{ d.morning }}</span>
                   </div>
                 {% endif %}
                 {% if d.lunch_menu %}
                   <div class="meal-item">
-                    <span class="meal-badge badge-lunch">☀️ 昼</span>
+                    <span class="meal-badge">昼</span>
                     <span>{{ d.lunch_menu }}</span>
                     {% if d.lunch_url %}
                       <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-                        <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">📖 昼レシピ ↗</a>
-                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.lunch_url | tojson }}, this)'>🔗 URLコピー</button>
+                        <a href="{{ d.lunch_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">昼レシピ ↗</a>
+                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.lunch_url | tojson }}, this)'>URLコピー</button>
                       </div>
                     {% endif %}
                   </div>
                 {% endif %}
                 {% if d.dinner_menu %}
                   <div class="meal-item">
-                    <span class="meal-badge badge-dinner">🌙 夜</span>
+                    <span class="meal-badge">夜</span>
                     <span>{{ d.dinner_menu }}</span>
                     {% if d.dinner_url %}
                       <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-                        <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">📖 夜レシピ ↗</a>
-                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.dinner_url | tojson }}, this)'>🔗 URLコピー</button>
+                        <a href="{{ d.dinner_url }}" target="_blank" rel="noopener" class="recipe-link" style="margin-left:0;">夜レシピ ↗</a>
+                        <button type="button" class="btn-url-copy" onclick='copyText({{ d.dinner_url | tojson }}, this)'>URLコピー</button>
                       </div>
                     {% endif %}
                   </div>
@@ -771,9 +774,9 @@
           {% endfor %}
 
           <div class="camp-footer-info">
-            <div>🛒 <strong>買い出し担当：</strong>{{ s.shoppers if s.shoppers else "未定" }}</div>
+            <div><strong>買い出し担当：</strong>{{ s.shoppers if s.shoppers else "未定" }}</div>
             {% if s.recipe_note %}
-              <div class="note-box">📝 <strong>メモ・買い物リスト：</strong><br>{{ s.recipe_note }}</div>
+              <div class="note-box"><strong>メモ・買い物リスト：</strong><br>{{ s.recipe_note }}</div>
             {% endif %}
           </div>
 
@@ -922,133 +925,4 @@
         lunch_menu: block.querySelector('[name="day_lunch_menu[]"]').value,
         lunch_url: block.querySelector('[name="day_lunch_url[]"]').value,
         dinner_menu: block.querySelector('[name="day_dinner_menu[]"]').value,
-        dinner_url: block.querySelector('[name="day_dinner_url[]"]').value,
-      };
-    });
-
-    container.innerHTML = dates.map((d, idx) => {
-      const data = (prefillDays && prefillDays[idx]) ? prefillDays[idx] : (currentValues[d] || {
-        event: "",
-        morning: "いつもの",
-        lunch_menu: "",
-        lunch_url: "",
-        dinner_menu: "",
-        dinner_url: ""
-      });
-
-      return `
-        <div class="day-form-block" data-date="${d}">
-          <div class="day-form-header">
-            <span>📅 ${idx + 1}日目：${formatJp(d)}</span>
-          </div>
-          <input type="hidden" name="day_date[]" value="${d}">
-
-          <div style="margin-bottom:8px;">
-            <label>🎉 この日のイベント（任意・試合前日、誕生日会など）</label>
-            <input type="text" name="day_event[]" value="${escapeHtml(data.event)}" placeholder="例：試合前日、誕生日会など（なければ空欄）">
-          </div>
-
-          <div class="meal-grid">
-            <div class="meal-row">
-              <label>🌅 朝ごはん（ない日は空欄）</label>
-              <input type="text" name="day_morning[]" value="${escapeHtml(data.morning)}" placeholder="例：いつもの">
-            </div>
-
-            <div class="meal-row">
-              <label>☀️ 昼ごはん（ない日は空欄）</label>
-              <div class="meal-row-inputs">
-                <input type="text" name="day_lunch_menu[]" value="${escapeHtml(data.lunch_menu)}" placeholder="メニュー（例：焼きそば）">
-                <input type="text" name="day_lunch_url[]" value="${escapeHtml(data.lunch_url)}" placeholder="レシピURLをペースト（任意）">
-              </div>
-            </div>
-
-            <div class="meal-row">
-              <label>🌙 夜ごはん（ない日は空欄）</label>
-              <div class="meal-row-inputs">
-                <input type="text" name="day_dinner_menu[]" value="${escapeHtml(data.dinner_menu)}" placeholder="メニュー（例：豚バラ大根）">
-                <input type="text" name="day_dinner_url[]" value="${escapeHtml(data.dinner_url)}" placeholder="レシピURLをペースト（任意）">
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  if (startInput && endInput) {
-    startInput.addEventListener("change", () => {
-      if (!endInput.value || endInput.value < startInput.value) {
-        endInput.value = startInput.value;
-      }
-      renderDayBlocks();
-    });
-    endInput.addEventListener("change", () => {
-      if (startInput.value && endInput.value < startInput.value) {
-        endInput.value = startInput.value;
-      }
-      renderDayBlocks();
-    });
-  }
-
-  function startEditSchedule(s) {
-    if (!startInput || !endInput) return;
-    document.getElementById("scheduleIdInput").value = s.id || "";
-    document.getElementById("formTitleText").textContent = "✏️ 予定を編集中";
-    document.getElementById("submitBtnText").textContent = "変更内容を保存する";
-    document.getElementById("editModeBanner").style.display = "flex";
-
-    const days = s.days || [];
-    if (days.length > 0) {
-      startInput.value = days[0].date;
-      endInput.value = days[days.length - 1].date;
-      renderDayBlocks(days);
-    }
-
-    const selected = s.selected_shoppers || [];
-    const registeredNicks = [];
-    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => {
-      registeredNicks.push(cb.value);
-      cb.checked = selected.includes(cb.value);
-    });
-    filterShopperChips();
-
-    const extras = selected.filter(name => !registeredNicks.includes(name));
-    document.getElementById("shoppersExtraInput").value = extras.join("、");
-    document.getElementById("recipeNoteInput").value = s.recipe_note || "";
-
-    document.getElementById("registerCard").scrollIntoView({ behavior: "smooth" });
-  }
-
-  function cancelEditSchedule() {
-    document.getElementById("scheduleIdInput").value = "";
-    document.getElementById("formTitleText").textContent = "➕ 練習・合宿のご飯＆買い出しをまとめて登録";
-    document.getElementById("submitBtnText").textContent = "この内容でまとめて登録する";
-    document.getElementById("editModeBanner").style.display = "none";
-    startInput.value = "";
-    endInput.value = "";
-    container.innerHTML = "";
-    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => { cb.checked = false; });
-    clearShopperSearch();
-    document.getElementById("shoppersExtraInput").value = "";
-    document.getElementById("recipeNoteInput").value = "";
-  }
-
-  function editMember(m) {
-    document.getElementById("memberIdInput").value = m.id || "";
-    document.getElementById("memberNicknameInput").value = m.nickname || "";
-    document.getElementById("memberRealNameInput").value = m.real_name || "";
-    document.getElementById("memberSubmitBtn").textContent = "更新";
-    document.getElementById("memberCancelWrap").style.display = "block";
-    document.getElementById("memberNicknameInput").focus();
-  }
-
-  function cancelEditMember() {
-    document.getElementById("memberIdInput").value = "";
-    document.getElementById("memberNicknameInput").value = "";
-    document.getElementById("memberRealNameInput").value = "";
-    document.getElementById("memberSubmitBtn").textContent = "追加";
-    document.getElementById("memberCancelWrap").style.display = "none";
-  }
-</script>
-</body>
-</html>
+        dinner_url: block.querySelector('[name="day_dinner

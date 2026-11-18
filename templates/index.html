@@ -925,4 +925,133 @@
         lunch_menu: block.querySelector('[name="day_lunch_menu[]"]').value,
         lunch_url: block.querySelector('[name="day_lunch_url[]"]').value,
         dinner_menu: block.querySelector('[name="day_dinner_menu[]"]').value,
-        dinner_url: block.querySelector('[name="day_dinner
+        dinner_url: block.querySelector('[name="day_dinner_url[]"]').value,
+      };
+    });
+
+    container.innerHTML = dates.map((d, idx) => {
+      const data = (prefillDays && prefillDays[idx]) ? prefillDays[idx] : (currentValues[d] || {
+        event: "",
+        morning: "いつもの",
+        lunch_menu: "",
+        lunch_url: "",
+        dinner_menu: "",
+        dinner_url: ""
+      });
+
+      return `
+        <div class="day-form-block" data-date="${d}">
+          <div class="day-form-header">
+            <span>${idx + 1}日目：${formatJp(d)}</span>
+          </div>
+          <input type="hidden" name="day_date[]" value="${d}">
+
+          <div style="margin-bottom:8px;">
+            <label>この日のイベント（任意・試合前日、誕生日会など）</label>
+            <input type="text" name="day_event[]" value="${escapeHtml(data.event)}" placeholder="例：試合前日、誕生日会など（なければ空欄）">
+          </div>
+
+          <div class="meal-grid">
+            <div class="meal-row">
+              <label>朝ごはん（ない日は空欄）</label>
+              <input type="text" name="day_morning[]" value="${escapeHtml(data.morning)}" placeholder="例：いつもの">
+            </div>
+
+            <div class="meal-row">
+              <label>昼ごはん（ない日は空欄）</label>
+              <div class="meal-row-inputs">
+                <input type="text" name="day_lunch_menu[]" value="${escapeHtml(data.lunch_menu)}" placeholder="メニュー（例：焼きそば）">
+                <input type="text" name="day_lunch_url[]" value="${escapeHtml(data.lunch_url)}" placeholder="レシピURLをペースト（任意）">
+              </div>
+            </div>
+
+            <div class="meal-row">
+              <label>夜ごはん（ない日は空欄）</label>
+              <div class="meal-row-inputs">
+                <input type="text" name="day_dinner_menu[]" value="${escapeHtml(data.dinner_menu)}" placeholder="メニュー（例：豚バラ大根）">
+                <input type="text" name="day_dinner_url[]" value="${escapeHtml(data.dinner_url)}" placeholder="レシピURLをペースト（任意）">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  if (startInput && endInput) {
+    startInput.addEventListener("change", () => {
+      if (!endInput.value || endInput.value < startInput.value) {
+        endInput.value = startInput.value;
+      }
+      renderDayBlocks();
+    });
+    endInput.addEventListener("change", () => {
+      if (startInput.value && endInput.value < startInput.value) {
+        endInput.value = startInput.value;
+      }
+      renderDayBlocks();
+    });
+  }
+
+  function startEditSchedule(s) {
+    if (!startInput || !endInput) return;
+    document.getElementById("scheduleIdInput").value = s.id || "";
+    document.getElementById("formTitleText").textContent = "予定を編集中";
+    document.getElementById("submitBtnText").textContent = "変更内容を保存する";
+    document.getElementById("editModeBanner").style.display = "flex";
+
+    const days = s.days || [];
+    if (days.length > 0) {
+      startInput.value = days[0].date;
+      endInput.value = days[days.length - 1].date;
+      renderDayBlocks(days);
+    }
+
+    const selected = s.selected_shoppers || [];
+    const registeredNicks = [];
+    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => {
+      registeredNicks.push(cb.value);
+      cb.checked = selected.includes(cb.value);
+    });
+    filterShopperChips();
+
+    const extras = selected.filter(name => !registeredNicks.includes(name));
+    document.getElementById("shoppersExtraInput").value = extras.join("、");
+    document.getElementById("recipeNoteInput").value = s.recipe_note || "";
+
+    document.getElementById("registerCard").scrollIntoView({ behavior: "smooth" });
+  }
+
+  function cancelEditSchedule() {
+    document.getElementById("scheduleIdInput").value = "";
+    document.getElementById("formTitleText").textContent = "練習・合宿のご飯＆買い出しをまとめて登録";
+    document.getElementById("submitBtnText").textContent = "この内容でまとめて登録する";
+    document.getElementById("editModeBanner").style.display = "none";
+    startInput.value = "";
+    endInput.value = "";
+    container.innerHTML = "";
+    document.querySelectorAll('input[name="shoppers_select[]"]').forEach(cb => { cb.checked = false; });
+    clearShopperSearch();
+    document.getElementById("shoppersExtraInput").value = "";
+    document.getElementById("recipeNoteInput").value = "";
+  }
+
+  function editMember(m) {
+    document.getElementById("memberIdInput").value = m.id || "";
+    document.getElementById("memberNicknameInput").value = m.nickname || "";
+    document.getElementById("memberRealNameInput").value = m.real_name || "";
+    document.getElementById("memberSubmitBtn").textContent = "更新";
+    document.getElementById("memberCancelWrap").style.display = "block";
+    document.getElementById("memberNicknameInput").focus();
+  }
+
+  function cancelEditMember() {
+    document.getElementById("memberIdInput").value = "";
+    document.getElementById("memberNicknameInput").value = "";
+    document.getElementById("memberRealNameInput").value = "";
+    document.getElementById("memberSubmitBtn").textContent = "追加";
+    document.getElementById("memberCancelWrap").style.display = "none";
+  }
+</script>
+</body>
+</html>

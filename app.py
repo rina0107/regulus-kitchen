@@ -15,6 +15,7 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 JST = timezone(timedelta(hours=9))
 WEEKDAYS_JA = ["月", "火", "水", "木", "金", "土", "日"]
+MEMBER_RECORD_ID = "MEMBER_MASTER_DATA"
 
 
 def get_today_str():
@@ -29,8 +30,57 @@ def format_date_ja(date_str):
         return date_str
 
 
-def normalize_schedule(row):
-    """単日データ（旧形式）と複数日合宿データ（新形式）を統一フォーマットに変換"""
+def load_members():
+    """部員マスタ（呼び名・本名）を schedules テーブルの専用レコードから取得"""
+    try:
+        res = supabase.table("schedules").select("*").eq("id", MEMBER_RECORD_ID).execute()
+        if res.data:
+            raw = res.data[0].get("recipe_note", "") or "[]"
+            return json.loads(raw)
+    except Exception:
+        pass
+    return []
+
+
+def save_members(members):
+    """部員マスタを Supabase に保存（追加・編集・削除に対応）"""
+    payload = {
+        "id": MEMBER_RECORD_ID,
+        "date": "1900-01-01",
+        "event": "__MEMBER_MASTER__",
+        "recipe_note": json.dumps(members, ensure_ascii=False),
+    }
+    try:
+        res = supabase.table("schedules").select("id").eq("id", MEMBER_RECORD_ID).execute()
+        if res.data:
+            supabase.table("schedules").update(payload).eq("id", MEMBER_RECORD_ID).execute()
+        else:
+            supabase.table("schedules").insert(payload).execute()
+    except Exception:
+        pass
+
+
+def build_mention_text(shoppers_str, members):
+    """呼び名から本名を引いて '@本名 買い出しお願いします！' を生成"""
+    if not shoppers_str:
+        return ""
+    nick_to_real = {
+        m.get("nickname", "").strip(): m.get("real_name", "").strip()
+        for m in members
+        if m.get("nickname")
+    }
+    names = [s.strip() for s in shoppers_str.replace(",", "、").split("、") if s.strip()]
+    mentions = []
+    for nick in names:
+        real = nick_to_real.get(nick) or nick
+        mentions.append(f"@{real}")
+    if not mentions:
+        return ""
+    return f"{' '.join(mentions)} 買い出しお願いします！"
+
+
+def normalize_schedule(row, members):
+    """単日データと複数日合宿データを統一フォーマットに変換"""
     item = dict(row)
     raw_event = item.get("event", "") or ""
     days = []
@@ -55,26 +105,36 @@ def normalize_schedule(row):
     for d in days:
         d["date_ja"] = format_date_ja(d.get("date", ""))
 
+    shoppers_str = item.get("shoppers", "") or ""
     item["days"] = days
     item["start_date"] = days[0].get("date", item.get("date", ""))
     item["end_date"] = days[-1].get("date", item.get("date", ""))
     item["start_date_ja"] = format_date_ja(item["start_date"])
     item["end_date_ja"] = format_date_ja(item["end_date"])
     item["is_multi_day"] = len(days) > 1
+    item["selected_shoppers"] = [
+        s.strip() for s in shoppers_str.replace(",", "、").split("、") if s.strip()
+    ]
+    item["mention_text"] = build_mention_text(shoppers_str, members)
     return item
 
 
-def load_schedules():
+def load_schedules(members):
     try:
         res = supabase.table("schedules").select("*").execute()
-        return [normalize_schedule(r) for r in (res.data or [])]
+        rows = [
+            r for r in (res.data or [])
+            if r.get("id") != MEMBER_RECORD_ID and r.get("event") != "__MEMBER_MASTER__"
+        ]
+        return [normalize_schedule(r, members) for r in rows]
     except Exception:
         return []
 
 
 @app.route("/")
 def index():
-    all_schedules = load_schedules()
+    members = load_members()
+    all_schedules = load_schedules(members)
     today_str = get_today_str()
 
     upcoming_schedules = sorted(
@@ -93,6 +153,7 @@ def index():
         "index.html",
         upcoming_schedules=upcoming_schedules,
         past_schedules=past_schedules,
+        members=members,
         is_admin=is_admin,
         app_url=app_url,
         today_str=today_str
@@ -117,11 +178,56 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/add_schedule", methods=["POST"])
-def add_schedule():
+@app.route("/save_member", methods=["POST"])
+def save_member():
     if not session.get("is_admin"):
         return redirect(url_for("index"))
 
+    member_id = request.form.get("member_id", "").strip()
+    nickname = request.form.get("nickname", "").strip()
+    real_name = request.form.get("real_name", "").strip()
+
+    if not nickname or not real_name:
+        flash("呼び名と本名の両方を入力してください。")
+        return redirect(url_for("index"))
+
+    members = load_members()
+    if member_id:
+        for m in members:
+            if m.get("id") == member_id:
+                m["nickname"] = nickname
+                m["real_name"] = real_name
+                break
+        flash(f"部員「{nickname}」の情報を更新しました！")
+    else:
+        members.append({
+            "id": str(random.randint(100000, 999999)),
+            "nickname": nickname,
+            "real_name": real_name,
+        })
+        flash(f"部員「{nickname}（{real_name}）」を登録しました！")
+
+    save_members(members)
+    return redirect(url_for("index"))
+
+
+@app.route("/delete_member/<member_id>", methods=["POST"])
+def delete_member(member_id):
+    if not session.get("is_admin"):
+        return redirect(url_for("index"))
+
+    members = [m for m in load_members() if m.get("id") != member_id]
+    save_members(members)
+    flash("部員を削除しました。")
+    return redirect(url_for("index"))
+
+
+@app.route("/save_schedule", methods=["POST"])
+def save_schedule():
+    if not session.get("is_admin"):
+        return redirect(url_for("index"))
+
+    schedule_id = request.form.get("schedule_id", "").strip()
     dates = request.form.getlist("day_date[]")
     events = request.form.getlist("day_event[]")
     mornings = request.form.getlist("day_morning[]")
@@ -145,10 +251,17 @@ def add_schedule():
             "dinner_url": dinner_urls[i].strip() if i < len(dinner_urls) else "",
         })
 
+    selected_shoppers = [s.strip() for s in request.form.getlist("shoppers_select[]") if s.strip()]
+    extra_shoppers = request.form.get("shoppers_extra", "").strip()
+    if extra_shoppers:
+        for e in extra_shoppers.replace(",", "、").split("、"):
+            if e.strip() and e.strip() not in selected_shoppers:
+                selected_shoppers.append(e.strip())
+    shoppers_str = "、".join(selected_shoppers)
+
     if days:
         first = days[0]
-        new_item = {
-            "id": str(random.randint(100000, 999999)),
+        record = {
             "date": first["date"],
             "event": "__DAYS__:" + json.dumps(days, ensure_ascii=False),
             "morning": first["morning"],
@@ -157,10 +270,15 @@ def add_schedule():
             "dinner_menu": first["dinner_menu"],
             "dinner_url": first["dinner_url"],
             "recipe_note": request.form.get("recipe_note", "").strip(),
-            "shoppers": request.form.get("shoppers", "").strip(),
+            "shoppers": shoppers_str,
         }
-        supabase.table("schedules").insert(new_item).execute()
-        flash("練習・合宿のご飯＆買い出し予定をまとめて登録しました！")
+        if schedule_id:
+            supabase.table("schedules").update(record).eq("id", schedule_id).execute()
+            flash("予定の変更を保存しました！")
+        else:
+            record["id"] = str(random.randint(100000, 999999))
+            supabase.table("schedules").insert(record).execute()
+            flash("練習・合宿のご飯＆買い出し予定をまとめて登録しました！")
 
     return redirect(url_for("index"))
 
